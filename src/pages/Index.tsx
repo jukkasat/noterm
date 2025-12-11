@@ -1,0 +1,267 @@
+import { useState, useEffect, useRef } from 'react';
+import { useSeoMeta } from '@unhead/react';
+import { Button } from '@/components/ui/button';
+import { Plus, Save, Upload, Settings } from 'lucide-react';
+import { NoteCard } from '@/components/NoteCard';
+import { AddNoteDialog } from '@/components/AddNoteDialog';
+import { NOTE_COLORS } from '@/components/noteColors';
+import { SettingsDialog } from '@/components/SettingsDialog';
+import type { Note } from '@/types/note';
+import { useToast } from '@/hooks/useToast';
+
+const Index = () => {
+  useSeoMeta({
+    title: 'noter m. - Your Digital Note Board',
+    description: 'A beautiful note board application for organizing your thoughts and things to remember',
+  });
+
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  // Load notes and settings from localStorage on mount
+  useEffect(() => {
+    const savedNotes = localStorage.getItem('noter-notes');
+    if (savedNotes) {
+      try {
+        setNotes(JSON.parse(savedNotes));
+      } catch (err) {
+        console.error('Failed to load notes:', err);
+      }
+    }
+
+    const savedDarkMode = localStorage.getItem('noter-dark-mode');
+    if (savedDarkMode === 'true') {
+      setDarkMode(true);
+    }
+  }, []);
+
+  // Save notes to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('noter-notes', JSON.stringify(notes));
+  }, [notes]);
+
+  // Save dark mode preference to localStorage
+  useEffect(() => {
+    localStorage.setItem('noter-dark-mode', darkMode.toString());
+  }, [darkMode]);
+
+  const handleAddNote = (message: string, subject?: string) => {
+    const now = Date.now();
+    const newNote: Note = {
+      id: crypto.randomUUID(),
+      subject,
+      message,
+      x: 100 + Math.random() * 200, // Top-left area: 100-300px from left
+      y: 150 + Math.random() * 150, // Top area: 150-300px from top
+      width: 250,
+      height: 200,
+      color: NOTE_COLORS[Math.floor(Math.random() * NOTE_COLORS.length)],
+      createdAt: now,
+      updatedAt: now,
+    };
+    setNotes([...notes, newNote]);
+  };
+
+  const handleUpdateNote = (id: string, updates: Partial<Note>) => {
+    setNotes(notes.map(note => note.id === id ? { ...note, ...updates } : note));
+  };
+
+  const handleDeleteNote = (id: string) => {
+    setNotes(notes.filter(note => note.id !== id));
+  };
+
+  const handleDragStart = (id: string) => {
+    // Bring note to front by reordering
+    const noteIndex = notes.findIndex(n => n.id === id);
+    if (noteIndex > -1) {
+      const note = notes[noteIndex];
+      const reordered = [...notes.filter(n => n.id !== id), note];
+      setNotes(reordered);
+    }
+  };
+
+  const handleSaveToFile = () => {
+    const dataStr = JSON.stringify(notes, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    const timestamp = new Date().toISOString().split('T')[0];
+    link.download = `noter-backup-${timestamp}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: 'Notes saved!',
+      description: 'Your notes have been exported to a JSON file.',
+    });
+  };
+
+  const handleLoadFromFile = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const notesData = event.target?.result as string;
+          const loadedNotes = JSON.parse(notesData);
+          if (Array.isArray(loadedNotes)) {
+            setNotes(loadedNotes);
+            toast({
+              title: 'Notes loaded!',
+              description: `Successfully loaded ${loadedNotes.length} note(s).`,
+            });
+          } else {
+            throw new Error('Invalid notes format');
+          }
+        } catch (_err) {
+          toast({
+            title: 'Failed to load notes',
+            description: 'The JSON file could not be parsed.',
+            variant: 'destructive',
+          });
+          console.log("Failed to load notes, error: " + _err)
+        }
+      };
+      reader.readAsText(file);
+    }
+    // Reset the input so the same file can be selected again
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const backgroundColor = darkMode ? '#2a2520' : '#d4c4a8';
+  const boardColor = darkMode ? '#3a3530' : '#f5f0e8';
+  const textColor = darkMode ? '#e0d5c5' : '#5a4a2f';
+  const subtleTextColor = darkMode ? '#c0b5a5' : '#6b5638';
+
+  return (
+    <div className="min-h-screen overflow-auto p-12" style={{ backgroundColor }}>
+      <div className="relative min-h-[calc(100vh-6rem)] min-w-[1000px] rounded-lg" style={{ backgroundColor: boardColor }}>
+        {/* Wooden border frame */}
+        <div
+          className="absolute inset-0 pointer-events-none rounded-lg"
+          style={{
+            border: '24px solid transparent',
+            borderImage: 'linear-gradient(135deg, #8b6f47 0%, #6b5638 25%, #5a4a2f 50%, #6b5638 75%, #8b6f47 100%) 1',
+            boxShadow: 'inset 0 0 30px rgba(0,0,0,0.3), 0 12px 48px rgba(0,0,0,0.5), 0 6px 24px rgba(0,0,0,0.4), 0 3px 12px rgba(0,0,0,0.3)',
+          }}
+        >
+          <div
+            className="absolute inset-0 rounded-lg"
+            style={{
+              background: 'repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(107, 86, 56, 0.1) 2px, rgba(107, 86, 56, 0.1) 4px)',
+            }}
+          />
+        </div>
+
+        {/* Header */}
+        <div className="relative z-0 flex items-center justify-between p-8">
+          <div className="py-2 pl-4">
+            <h1 className="text-6xl mb-1" style={{ color: textColor, fontFamily: 'Sacramento, cursive' }}>
+              noterm.
+            </h1>
+            <p className="text-sm" style={{ color: subtleTextColor }}>
+              Your Digital Note Board
+            </p>
+          </div>
+        </div>
+
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json,application/json"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+
+        {/* Note board area */}
+        <div className="relative" style={{ minHeight: 'calc(100vh - 12rem)' }}>
+          {notes.map((note) => (
+            <NoteCard
+              key={note.id}
+              note={note}
+              onUpdate={handleUpdateNote}
+              onDelete={handleDeleteNote}
+              onDragStart={handleDragStart}
+            />
+          ))}
+
+          {notes.length === 0 && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center" style={{ color: subtleTextColor }}>
+                <p className="text-xl mb-2">No notes yet!</p>
+                <p className="text-sm opacity-75">Click the + button to add your first note</p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Top right buttons */}
+        <div className="fixed top-8 right-8 flex gap-2 z-50">
+          <Button
+            onClick={handleSaveToFile}
+            variant="outline"
+            className="h-10 w-10 p-0"
+            style={{ borderColor: '#8b6f47', color: '#5a4a2f', backgroundColor: '#f5f0e8' }}
+          >
+            <Save className="h-5 w-5" />
+          </Button>
+          <Button
+            onClick={handleLoadFromFile}
+            variant="outline"
+            className="h-10 w-10 p-0"
+            style={{ borderColor: '#8b6f47', color: '#5a4a2f', backgroundColor: '#f5f0e8' }}
+          >
+            <Upload className="h-5 w-5" />
+          </Button>
+          <Button
+            onClick={() => setIsSettingsDialogOpen(true)}
+            className="h-10 w-10 p-0 rounded-full shadow-lg hover:shadow-xl transition-shadow"
+            style={{ backgroundColor: '#8b6f47' }}
+          >
+            <Settings className="h-5 w-5" />
+          </Button>
+        </div>
+
+        {/* Add note button */}
+        <Button
+          onClick={() => setIsAddDialogOpen(true)}
+          className="fixed bottom-8 right-8 h-12 w-12 p-0 rounded-full shadow-lg hover:shadow-xl transition-shadow"
+          style={{ backgroundColor: '#81511bff' }}
+        >
+          <Plus className="h-6 w-6" />
+        </Button>
+
+        {/* Dialogs */}
+        <AddNoteDialog
+          open={isAddDialogOpen}
+          onOpenChange={setIsAddDialogOpen}
+          onAdd={handleAddNote}
+          darkMode={darkMode}
+        />
+        <SettingsDialog
+          open={isSettingsDialogOpen}
+          onOpenChange={setIsSettingsDialogOpen}
+          darkMode={darkMode}
+          onDarkModeChange={setDarkMode}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default Index;
