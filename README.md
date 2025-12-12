@@ -3,10 +3,11 @@
 
 noter m. is a lightweight, digital note board built with React, TypeScript, TailwindCSS and shadcn/ui. It includes local persistence, export/import functionality and works as a fully Progressive Web App (PWA).
 
+<img width="1098" height="550" alt="noter_m_preview" src="https://github.com/user-attachments/assets/486671df-db87-484e-81a6-d16108687c5f" />
+
 
 ## Quick links
 
-- Project overview and design rules: [AGENTS.md](AGENTS.md)
 - App entry / providers: [`src/App.tsx`](src/App.tsx)
 - Router: [`AppRouter.tsx`](AppRouter.tsx)
 - Main page (note board): [`src/pages/Index.tsx`](src/pages/Index.tsx)
@@ -23,7 +24,6 @@ noter m. is a lightweight, digital note board built with React, TypeScript, Tail
 - LocalStorage persistence and JSON export/import
 - PWA support (manifest + service worker)
 - shadcn/ui component library patterns (Radix primitives, Tailwind)
-- Ready hooks and guidelines (see [AGENTS.md](AGENTS.md))
 - Opinionated UX and accessibility patterns
 
 ### Theme System
@@ -126,4 +126,5 @@ The project includes a complete light/dark theme system using CSS custom propert
 Built with shadcn/ui templates and community libs — for credits see repo history.
 
 ## License
+
 MIT license
