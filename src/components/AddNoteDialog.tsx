@@ -90,11 +90,3 @@ export function AddNoteDialog({ open, onOpenChange, onAdd, darkMode = false }: A
     </Dialog>
   );
 }
-
-// const NoteDialogWrapper = () => <AddNoteDialog open={false} onOpenChange={function (open: boolean): void {
-//   throw new Error('Function not implemented.');
-// } } onAdd={function (message: string, subject?: string): void {
-//   throw new Error('Function not implemented.');
-// } } />;
-
-// export default NoteDialogWrapper;
