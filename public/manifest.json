@@ -1,7 +1,7 @@
 {
-  "name": "noter m. - Digital Note Board",
+  "name": "noter m. - Your Digital Note Board",
   "short_name": "noter m.",
-  "description": "A beautiful note board application for organizing your thoughts",
+  "description": "The Digital Note Board application for organizing your thoughts and memos",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f5f0e8",
