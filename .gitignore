@@ -15,7 +15,7 @@ dist-ssr
 .ai/
 yarn.lock
 .vscode
-docs
+dev
 
 # Editor directories and files
 .idea
