@@ -22,11 +22,6 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // detect click vs drag
-  const pointerDownRef = useRef<{ x: number; y: number } | null>(null);
-  const CLICK_MOVE_THRESHOLD = 6; // pixels
-
-
   const formatDate = (timestamp: number) => {
     const date = new Date(timestamp);
     const day = String(date.getDate()).padStart(2, '0');
@@ -35,8 +30,9 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
     return `${day}-${month}-${year}`;
   };
 
-  const startDragging = (clientX: number, clientY: number) => {
+  const handleDragStart = (clientX: number, clientY: number) => {
     if (isEditing || isResizing) return;
+
     setIsDragging(true);
     setDragOffset({
       x: clientX - note.x,
@@ -46,84 +42,14 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
-    // record initial pointer
-    pointerDownRef.current = { x: e.clientX, y: e.clientY };
-
-    const onDocMove = (moveEvent: MouseEvent) => {
-      const start = pointerDownRef.current;
-      if (!start) return;
-      const dx = moveEvent.clientX - start.x;
-      const dy = moveEvent.clientY - start.y;
-      if (Math.hypot(dx, dy) > CLICK_MOVE_THRESHOLD) {
-        // movement large => start dragging
-        startDragging(moveEvent.clientX, moveEvent.clientY);
-        cleanup();
-      }
-    };
-
-    const onDocUp = (upEvent: MouseEvent) => {
-      const start = pointerDownRef.current;
-      cleanup();
-      if (!start) return;
-      const dx = upEvent.clientX - start.x;
-      const dy = upEvent.clientY - start.y;
-      // small movement => treat as click => open edit
-      if (Math.hypot(dx, dy) <= CLICK_MOVE_THRESHOLD && !isDragging && !isResizing) {
-        setIsEditing(true);
-      }
-      pointerDownRef.current = null;
-    };
-
-    const cleanup = () => {
-      document.removeEventListener('mousemove', onDocMove);
-      document.removeEventListener('mouseup', onDocUp);
-    };
-    
-    document.addEventListener('mousemove', onDocMove);
-    document.addEventListener('mouseup', onDocUp);
+    handleDragStart(e.clientX, e.clientY);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (e.touches.length !== 1) return;
-    const touch = e.touches[0];
-    pointerDownRef.current = { x: touch.clientX, y: touch.clientY };
-
-    const onTouchMove = (moveEvent: TouchEvent) => {
-      const start = pointerDownRef.current;
-      if (!start) return;
-      const t = moveEvent.touches[0];
-      const dx = t.clientX - start.x;
-      const dy = t.clientY - start.y;
-      if (Math.hypot(dx, dy) > CLICK_MOVE_THRESHOLD) {
-        startDragging(t.clientX, t.clientY);
-        cleanup();
-      }
-    };
-
-    const onTouchEnd = (endEvent: TouchEvent) => {
-      const start = pointerDownRef.current;
-      cleanup();
-      if (!start) return;
-      // treat as tap if there was no significant move
-      // use changedTouches for end coordinates fallback
-      const t = endEvent.changedTouches && endEvent.changedTouches[0];
-      const endX = t ? t.clientX : start.x;
-      const endY = t ? t.clientY : start.y;
-      const dx = endX - start.x;
-      const dy = endY - start.y;
-      if (Math.hypot(dx, dy) <= CLICK_MOVE_THRESHOLD && !isDragging && !isResizing) {
-        setIsEditing(true);
-      }
-      pointerDownRef.current = null;
-    };
-
-    const cleanup = () => {
-      document.removeEventListener('touchmove', onTouchMove);
-      document.removeEventListener('touchend', onTouchEnd);
-    };
-
-    document.addEventListener('touchmove', onTouchMove, { passive: false });
-    document.addEventListener('touchend', onTouchEnd);
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      handleDragStart(touch.clientX, touch.clientY);
+    }
   };
 
   const handleResizeStart = (e: React.MouseEvent | React.TouchEvent, clientX: number, clientY: number) => {
