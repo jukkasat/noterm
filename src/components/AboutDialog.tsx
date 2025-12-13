@@ -16,7 +16,7 @@ interface AboutDialogProps {
 export function AboutDialog({ open, onOpenChange, darkMode = false }: AboutDialogProps) {
   const dialogBg = darkMode ? '#3a3530' : '#ffffff';
   const textColor = darkMode ? '#e0d5c5' : '#645033ff';
-  const descColor = darkMode ? '#c0b5a5' : '#9b9b9bff';
+  const descColor = darkMode ? '#c0b5a5' : '#838181ff';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -25,19 +25,19 @@ export function AboutDialog({ open, onOpenChange, darkMode = false }: AboutDialo
         style={{ backgroundColor: dialogBg, color: textColor, borderColor: '#8b6f47' }}
       >
         <DialogHeader>
-          {/* <DialogTitle style={{ color: textColor }}>about noter memo</DialogTitle>
-           */}
-           <DialogTitle>
+          <DialogTitle>
             <p className="text-6xl mb-1 flex justify-center" style={{ color: textColor, fontFamily: 'Sacramento, cursive', fontWeight: 'normal'}}>
               noterm.
             </p>
-           </DialogTitle>
-          <DialogDescription style={{ color: descColor }}>
-            <b>noter memo</b> (noter m.) is a lightweight, digital note board - create, edit, move, resize and export your post‑it style notes.
+          </DialogTitle>
+          <p className="pb-6 text-center">_______</p>
+          <DialogDescription className="text-center" style={{ color: descColor }}>
+            <b>noter memo </b> (noter m.) is a lightweight, digital note board - create, edit, move, resize and export your post‑it style notes.
           </DialogDescription>
+          <p className="pt-2 text-center">_______</p>
         </DialogHeader>
 
-        <div className="py-4" style={{ paddingLeft: '4px'}}>
+        <div className="py-4 pl-1 text-center" >
           <p className="text-sm mb-4" style={{ color: textColor }}>
             <b>noter m.</b> aims to be the best note app. Available for everyone. Minimal. Focused.
           </p>
@@ -56,10 +56,9 @@ export function AboutDialog({ open, onOpenChange, darkMode = false }: AboutDialo
           <p className="text-sm mb-4" style={{ color: textColor }}>
             <b>Happy noting!</b>
           </p>
-          <p>______</p>
           <p></p>
           <p></p>
-          <div className="flex justify-center" style={{ paddingTop: '30px'}}>
+          <div className="pt-6 flex justify-center">
             <Button onClick={() => onOpenChange(false)} style={{ backgroundColor: '#645033ff', color: '#ffffff' }}>
               Close
             </Button>
