@@ -88,7 +88,6 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
         const boardRect = parent ? parent.getBoundingClientRect() : { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
         const localX = clientX - boardRect.left;
         const localY = clientY - boardRect.top;
-
         let newX = localX - dragOffset.x;
         let newY = localY - dragOffset.y;
 
