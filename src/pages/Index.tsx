@@ -7,6 +7,7 @@ import { AddNoteDialog } from '@/components/AddNoteDialog';
 import { NOTE_COLORS } from '@/components/noteColors';
 import { SettingsDialog } from '@/components/SettingsDialog';
 import type { Note } from '@/types/note';
+import { generateId } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
 
 const Index = () => {
@@ -52,7 +53,7 @@ const Index = () => {
   const handleAddNote = (message: string, subject?: string) => {
     const now = Date.now();
     const newNote: Note = {
-      id: crypto.randomUUID(),
+      id: generateId(),
       subject,
       message,
       x: 100 + Math.random() * 200, // Top-left area: 100-300px from left
@@ -241,7 +242,7 @@ const Index = () => {
         <Button
           onClick={() => setIsAddDialogOpen(true)}
           className="fixed bottom-8 right-8 h-12 w-12 p-0 rounded-full shadow-lg hover:shadow-xl transition-shadow"
-          style={{ backgroundColor: '#81511bff' }}
+          style={{ backgroundColor: '#81511bff', zIndex: 2000 }}
         >
           <Plus className="h-6 w-6" />
         </Button>

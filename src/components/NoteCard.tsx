@@ -33,10 +33,15 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
   const handleDragStart = (clientX: number, clientY: number) => {
     if (isEditing || isResizing) return;
 
+    // compute board (parent) rect so note coordinates are relative to board
+    const parent = cardRef.current?.offsetParent as HTMLElement | null;
+    const boardRect = parent ? parent.getBoundingClientRect() : { left: 0, top: 0 };
+
     setIsDragging(true);
+    // store pointer offset relative to board-local note position
     setDragOffset({
-      x: clientX - note.x,
-      y: clientY - note.y,
+      x: clientX - boardRect.left - note.x,
+      y: clientY - boardRect.top - note.y,
     });
     onDragStart(note.id);
   };
@@ -78,18 +83,47 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
   useEffect(() => {
     const handleMove = (clientX: number, clientY: number) => {
       if (isDragging) {
-        let newX = clientX - dragOffset.x;
-        let newY = clientY - dragOffset.y;
+        // compute board rect and convert client coords to board-local coords
+        const parent = cardRef.current?.offsetParent as HTMLElement | null;
+        const boardRect = parent ? parent.getBoundingClientRect() : { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
+        const localX = clientX - boardRect.left;
+        const localY = clientY - boardRect.top;
 
-        // allow notes to be placed a bit outside the board (viewport)
-        const OUTSIDE_ALLOWANCE = 400;
-        const viewportW = window.innerWidth;
-        const viewportH = window.innerHeight;
-        const minX = -OUTSIDE_ALLOWANCE;
-        const minY = -OUTSIDE_ALLOWANCE - 200;
-        const maxX = viewportW - note.width + OUTSIDE_ALLOWANCE;
-        const maxY = viewportH - note.height + OUTSIDE_ALLOWANCE;
+        let newX = localX - dragOffset.x;
+        let newY = localY - dragOffset.y;
 
+        // Allow half of the note to be outside the board
+        const minX = -note.width / 2;
+        const maxX = (boardRect.width ?? window.innerWidth) - note.width / 2;
+        const minY = -note.height;
+        const maxY = (boardRect.height ?? window.innerHeight) - note.height / 2;
+
+        // Prevent overlapping the fixed Add Note button (bottom-right)
+        const addBtn = document.getElementById('add-note-button');
+        if (addBtn) {
+          const btnRect = addBtn.getBoundingClientRect();
+          const btnLocalLeft = btnRect.left - boardRect.left;
+          const btnLocalTop = btnRect.top - boardRect.top;
+          const btnLocalRight = btnLocalLeft + btnRect.width;
+          const btnLocalBottom = btnLocalTop + btnRect.height;
+
+          // If the note would overlap the button, try to push it above the button; otherwise push left
+          const noteRight = newX + note.width;
+          const noteBottom = newY + note.height;
+          const overlaps =
+            !(noteRight <= btnLocalLeft || newX >= btnLocalRight || noteBottom <= btnLocalTop || newY >= btnLocalBottom);
+
+          if (overlaps) {
+            const altY = btnLocalTop - note.height; // move above
+            if (altY >= minY) {
+              newY = altY;
+            } else {
+              // move to the left of the button
+              const altX = btnLocalLeft - note.width;
+              newX = Math.min(newX, altX);
+            }
+          }
+        }
         newX = clamp(newX, minX, maxX);
         newY = clamp(newY, minY, maxY);
         onUpdate(note.id, { x: newX, y: newY });
@@ -181,7 +215,7 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
                 className="flex-1 bg-transparent border-none outline-none resize-none text-sm font-handwriting overflow-auto"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Note message..."
+                placeholder="Note content..."
                 onClick={(e) => e.stopPropagation()}
                 onMouseDown={(e) => e.stopPropagation()}
                 onTouchStart={(e) => e.stopPropagation()}

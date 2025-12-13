@@ -33,6 +33,15 @@ export function AddNoteDialog({ open, onOpenChange, onAdd, darkMode = false }: A
     }
   };
 
+  const submitFromButton = (e?: React.PointerEvent | React.MouseEvent | React.TouchEvent) => {
+    e?.preventDefault?.();
+    if (!message.trim()) return;
+    onAdd(message, subject.trim() || undefined);
+    setSubject('');
+    setMessage('');
+    onOpenChange(false);
+  };
+
   const dialogBg = darkMode ? '#3a3530' : '#faf8f3';
   const textColor = darkMode ? '#e0d5c5' : '#5a4a2f';
   const descColor = darkMode ? '#c0b5a5' : '#8b7355';
@@ -68,7 +77,7 @@ export function AddNoteDialog({ open, onOpenChange, onAdd, darkMode = false }: A
               <Label htmlFor="message" style={{ color: textColor }}>Message</Label>
               <Textarea
                 id="message"
-                placeholder="Enter your note message..."
+                placeholder="Enter note content..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 className={darkMode ? 'border-gray-600 min-h-[100px] placeholder:text-[#5a4a2f]' : 'min-h-[100px] border-[#d4c4a8]'}
@@ -79,7 +88,10 @@ export function AddNoteDialog({ open, onOpenChange, onAdd, darkMode = false }: A
           </div>
           <DialogFooter>
             <Button
-              type="submit"
+              type="button"
+              onClick={submitFromButton}
+              onPointerUp={submitFromButton}
+              onTouchEnd={submitFromButton}
               style={{ backgroundColor: '#8b6f47', color: '#ffffff' }}
             >
               Add Note
@@ -90,3 +102,4 @@ export function AddNoteDialog({ open, onOpenChange, onAdd, darkMode = false }: A
     </Dialog>
   );
 }
+ 
