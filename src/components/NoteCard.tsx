@@ -35,17 +35,6 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
     return `${day}-${month}-${year}`;
   };
 
-  // const handleDragStart = (clientX: number, clientY: number) => {
-  //   if (isEditing || isResizing) return;
-
-  //   setIsDragging(true);
-  //   setDragOffset({
-  //     x: clientX - note.x,
-  //     y: clientY - note.y,
-  //   });
-  //   onDragStart(note.id);
-  // };
-
   const startDragging = (clientX: number, clientY: number) => {
     if (isEditing || isResizing) return;
     setIsDragging(true);
@@ -56,9 +45,6 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
     onDragStart(note.id);
   };
 
-  // const handleMouseDown = (e: React.MouseEvent) => {
-  //   handleDragStart(e.clientX, e.clientY);
-  // };
   const handleMouseDown = (e: React.MouseEvent) => {
     // record initial pointer
     pointerDownRef.current = { x: e.clientX, y: e.clientY };
@@ -92,17 +78,10 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
       document.removeEventListener('mousemove', onDocMove);
       document.removeEventListener('mouseup', onDocUp);
     };
-
+    
     document.addEventListener('mousemove', onDocMove);
     document.addEventListener('mouseup', onDocUp);
   };
-
-  // const handleTouchStart = (e: React.TouchEvent) => {
-  //   if (e.touches.length === 1) {
-  //     const touch = e.touches[0];
-  //     handleDragStart(touch.clientX, touch.clientY);
-  //   }
-  // };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length !== 1) return;
