@@ -98,32 +98,6 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
         const minY = -note.height;
         const maxY = (boardRect.height ?? window.innerHeight) - note.height / 2;
 
-        // Prevent overlapping the fixed Add Note button (bottom-right)
-        const addBtn = document.getElementById('add-note-button');
-        if (addBtn) {
-          const btnRect = addBtn.getBoundingClientRect();
-          const btnLocalLeft = btnRect.left - boardRect.left;
-          const btnLocalTop = btnRect.top - boardRect.top;
-          const btnLocalRight = btnLocalLeft + btnRect.width;
-          const btnLocalBottom = btnLocalTop + btnRect.height;
-
-          // If the note would overlap the button, try to push it above the button; otherwise push left
-          const noteRight = newX + note.width;
-          const noteBottom = newY + note.height;
-          const overlaps =
-            !(noteRight <= btnLocalLeft || newX >= btnLocalRight || noteBottom <= btnLocalTop || newY >= btnLocalBottom);
-
-          if (overlaps) {
-            const altY = btnLocalTop - note.height; // move above
-            if (altY >= minY) {
-              newY = altY;
-            } else {
-              // move to the left of the button
-              const altX = btnLocalLeft - note.width;
-              newX = Math.min(newX, altX);
-            }
-          }
-        }
         newX = clamp(newX, minX, maxX);
         newY = clamp(newY, minY, maxY);
         onUpdate(note.id, { x: newX, y: newY });
