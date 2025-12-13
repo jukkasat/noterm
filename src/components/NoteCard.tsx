@@ -3,6 +3,7 @@ import type { Note } from '@/types/note';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Pencil, Trash2, GripHorizontal } from 'lucide-react';
+import { clamp } from '@/lib/utils';
 
 interface NoteCardProps {
   note: Note;
@@ -77,8 +78,20 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
   useEffect(() => {
     const handleMove = (clientX: number, clientY: number) => {
       if (isDragging) {
-        const newX = clientX - dragOffset.x;
-        const newY = clientY - dragOffset.y;
+        let newX = clientX - dragOffset.x;
+        let newY = clientY - dragOffset.y;
+
+        // allow notes to be placed a bit outside the board (viewport)
+        const OUTSIDE_ALLOWANCE = 400;
+        const viewportW = window.innerWidth;
+        const viewportH = window.innerHeight;
+        const minX = -OUTSIDE_ALLOWANCE;
+        const minY = -OUTSIDE_ALLOWANCE - 200;
+        const maxX = viewportW - note.width + OUTSIDE_ALLOWANCE;
+        const maxY = viewportH - note.height + OUTSIDE_ALLOWANCE;
+
+        newX = clamp(newX, minX, maxX);
+        newY = clamp(newY, minY, maxY);
         onUpdate(note.id, { x: newX, y: newY });
       } else if (isResizing) {
         const deltaX = clientX - resizeStart.x;
@@ -119,7 +132,7 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
       document.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('touchend', handleEnd);
     };
-  }, [isDragging, isResizing, dragOffset, resizeStart, note.id, onUpdate]);
+  }, [isDragging, isResizing, dragOffset, resizeStart, note.id, onUpdate, note.width, note.height]);
 
   const handleSave = () => {
     onUpdate(note.id, { subject, message, updatedAt: Date.now() });
