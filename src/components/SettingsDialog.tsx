@@ -33,7 +33,7 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange 
         >
           <DialogHeader>
             <DialogTitle style={{ color: textColor}}>Settings</DialogTitle>
-            <p className="pb-3">______</p>
+            <p className="pb-4">______</p>
             <DialogDescription style={{ color: descColor }}>
               Customize your noter m. experience.
             </DialogDescription>
