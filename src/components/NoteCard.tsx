@@ -208,6 +208,10 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
                 onClick={(e) => e.stopPropagation()}
                 onMouseDown={(e) => e.stopPropagation()}
                 onTouchStart={(e) => e.stopPropagation()}
+                onDoubleClick={(e) => {
+                  e.stopPropagation();
+                  setIsEditing(false);
+                }}
               />
             </div>
             <div className="flex gap-1 mt-2">
@@ -241,7 +245,12 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
           </>
         ) : (
           <>
-            <div className="flex-1 overflow-auto">
+            <div
+              className="flex-1 overflow-auto"
+              onDoubleClick={(e) => {
+                e.stopPropagation();
+                setIsEditing(true);
+              }}>
               {note.subject && (
                 <p className="text-sm font-handwriting font-semibold mb-2 border-b border-gray-400 pb-1">
                   {note.subject}
