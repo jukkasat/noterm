@@ -4,6 +4,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Pencil, Trash2, GripHorizontal } from 'lucide-react';
 import { clamp } from '@/lib/utils';
+import { Dialog, DialogContent } from '@radix-ui/react-dialog';
+import { DialogFooter } from './ui/dialog';
 
 interface NoteCardProps {
   note: Note;
@@ -13,11 +15,12 @@ interface NoteCardProps {
 }
 
 export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProps) {
-  const [isEditing, setIsEditing] = useState(false);
   const [subject, setSubject] = useState(note.subject || '');
   const [message, setMessage] = useState(note.message);
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const cardRef = useRef<HTMLDivElement>(null);
@@ -139,11 +142,24 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
       document.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('touchend', handleEnd);
     };
-  }, [isDragging, isResizing, dragOffset, resizeStart, note.id, onUpdate, note.width, note.height]);
+  }, [isDragging, isResizing, dragOffset, resizeStart, note.id, onUpdate, onDelete, note.width, note.height]);
 
   const handleSave = () => {
     onUpdate(note.id, { subject, message, updatedAt: Date.now() });
     setIsEditing(false);
+  };
+
+  const handleDelete = () => {
+    setIsDeleting(true);
+  };
+
+  const handleConfirmDelete = () => {
+    onDelete(note.id);
+    setIsDeleting(false);
+};
+
+  const handleClose = () => {
+    setIsDeleting(false);
   };
 
   const handleCancel = () => {
@@ -260,7 +276,7 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
                     className="h-6 w-6 p-0 hover:text-red-600"
                     onClick={(e) => {
                       e.stopPropagation();
-                      onDelete(note.id);
+                      handleDelete();
                     }}
                     onMouseDown={(e) => e.stopPropagation()}
                     onTouchStart={(e) => e.stopPropagation()}
@@ -283,6 +299,19 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
           >
             <GripHorizontal className="h-5 w-5 text-gray-600 rotate-45 pointer-events-none" />
           </div>
+        )}
+
+        {isDeleting && (
+          <Dialog open onOpenChange={handleClose}>
+            <DialogContent className="text-xs whitespace-pre-wrap break-words font-handwriting">
+              
+              <DialogFooter className="pt-3 pr-0.5">
+                <p className="pr-5 text-red-600">Delete Note?</p>
+                <button onClick={handleClose}>No</button>
+                <button className="pl-1" onClick={handleConfirmDelete}>Yes</button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         )}
       </div>
     </Card>

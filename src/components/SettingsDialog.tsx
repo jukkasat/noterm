@@ -21,7 +21,7 @@ interface SettingsDialogProps {
 export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange }: SettingsDialogProps) {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const dialogBg = darkMode ? '#3a3530' : '#ffffff';
-  const textColor = darkMode ? '#e0d5c5' : '#504028ff';
+  const textColor = darkMode ? '#e0d5c5' : '#5a4a2f';
   const descColor = darkMode ? '#c0b5a5' : '#817d78ff';
 
   return (
