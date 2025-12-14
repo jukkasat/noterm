@@ -13,7 +13,7 @@ import { useToast } from '@/hooks/useToast';
 const Index = () => {
   useSeoMeta({
     title: 'noter m. - Your Digital Note Board',
-    description: 'A beautiful note board application for organizing your thoughts and things to remember',
+    description: 'A beautiful digital note board for organizing your thoughts and things to remember',
   });
 
   const [notes, setNotes] = useState<Note[]>([]);
@@ -92,8 +92,14 @@ const Index = () => {
 
     const link = document.createElement('a');
     link.href = url;
-    const timestamp = new Date().toISOString().split('T')[0];
-    link.download = `noter-backup-${timestamp}.json`;
+    const now = new Date();
+    const dd = String(now.getDate()).padStart(2, '0');
+    const mm = String(now.getMonth() + 1).padStart(2, '0'); // month
+    const yy = String(now.getFullYear()).substring(2);
+    const hh = String(now.getHours()).padStart(2, '0');
+    const min = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    link.download = `noter_backup_${dd}_${mm}_${yy}_${hh}_${min}_${ss}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -171,10 +177,10 @@ const Index = () => {
         {/* Header */}
         <div className="relative z-0 flex items-center justify-between p-8">
           <div className="py-2 pl-4">
-            <h1 className="text-6xl mb-1" style={{ color: textColor, fontFamily: 'Sacramento, cursive' }}>
+            <h1 className="text-6xl pl-1" style={{ color: textColor, fontFamily: 'Sacramento, cursive' }}>
               noterm.
             </h1>
-            <p className="text-sm" style={{ color: subtleTextColor }}>
+            <p className="text-sm" style={{ color: subtleTextColor}}>
               Your Digital Note Board
             </p>
           </div>
