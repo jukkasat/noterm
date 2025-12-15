@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Pencil, Trash2, GripHorizontal } from 'lucide-react';
 import { clamp } from '@/lib/utils';
-import { Dialog, DialogContent } from '@radix-ui/react-dialog';
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@radix-ui/react-dialog';
 import { DialogFooter } from './ui/dialog';
 
 interface NoteCardProps {
@@ -313,7 +313,8 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
         {isDeleting && (
           <Dialog open onOpenChange={handleClose}>
             <DialogContent className="text-xs whitespace-pre-wrap break-words font-handwriting">
-              
+              <DialogTitle></DialogTitle>
+              <DialogDescription></DialogDescription>
               <DialogFooter className="pt-3 pr-0.5">
                 <p className="pr-5 text-red-600">Delete Note?</p>
                 <button onClick={handleClose}>No</button>
