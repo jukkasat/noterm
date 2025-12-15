@@ -13,25 +13,23 @@ export function clamp(value: number, min: number, max: number) {
 // otherwise falls back to `crypto.getRandomValues` so it works on older/mobile browsers.
 export function generateId(): string {
   try {
-    if (typeof crypto !== 'undefined' && typeof (crypto as any).randomUUID === 'function') {
-      return (crypto as any).randomUUID();
+    if (typeof crypto !== 'undefined' && typeof (crypto.randomUUID).bind(crypto) === 'function') {
+      return crypto.randomUUID();
     }
   } catch (_) {
-    // ignore and fall back
+    // print and and fall back
+    console.log("error: " + _)
   }
 
-  const getRandomValues =
-    (typeof crypto !== 'undefined' && (crypto as any).getRandomValues && ((crypto as any).getRandomValues).bind(crypto)) ||
-    // @ts-ignore - for older IE fallback (unlikely in this app)
-    (typeof (window as any).msCrypto !== 'undefined' && (window as any).msCrypto.getRandomValues && (window as any).msCrypto.getRandomValues.bind((window as any).msCrypto));
-
+  const getRandomValues = typeof crypto !== 'undefined' && crypto.getRandomValues ? crypto.getRandomValues.bind(crypto) : null;
+  
   if (!getRandomValues) {
     // Last resort: pseudo random (not ideal, but avoids throwing)
     return 'id-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
   }
 
   const buf = new Uint8Array(16);
-  getRandomValues(buf as any);
+  getRandomValues(buf);
 
   // Per RFC4122 section 4.4
   buf[6] = (buf[6] & 0x0f) | 0x40;
