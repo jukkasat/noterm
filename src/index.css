@@ -99,9 +99,23 @@
   }
 }
 
-
 @layer utilities {
   .font-handwriting {
     font-family: 'Comic Sans MS', 'Chalkboard SE', 'Bradley Hand', cursive;
+  }
+}
+
+.note-container {
+  padding: 3rem 3rem; /* Default padding for larger screens */
+}
+
+.note-container.mobile {
+  padding: 0.5rem 0.5rem; /* Reduced padding for mobile screens */
+}
+
+/* Optional: Add more styles for layout on smaller devices */
+@media (max-width: 768px) {
+  .note-container {
+    padding: 0.5rem 0.5rem; /* Responsive style specifically for screens up to 768px */
   }
 }

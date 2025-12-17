@@ -89,16 +89,24 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
         // compute board rect and convert client coords to board-local coords
         const parent = cardRef.current?.offsetParent as HTMLElement | null;
         const boardRect = parent ? parent.getBoundingClientRect() : { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
-        const localX = clientX - boardRect.left;
-        const localY = clientY - boardRect.top;
-        let newX = localX - dragOffset.x;
-        let newY = localY - dragOffset.y;
+
+        const scrollOffset = {
+          left: parent?.scrollLeft || 0,
+          top: parent?.scrollTop || 0,
+        };
+
+        // Convert clientX and clientY to board-relative coordinates
+        const boardX = clientX - boardRect.left + scrollOffset.left;
+        const boardY = clientY - boardRect.top + scrollOffset.top;
+
+        let newX = boardX - dragOffset.x;
+        let newY = boardY - dragOffset.y;
 
         // Allow half of the note to be outside the board
         const minX = -note.width / 2;
-        const maxX = (boardRect.width ?? window.innerWidth) - note.width / 2;
+        const maxX = boardRect.width - note.width / 2;
         const minY = -note.height;
-        const maxY = (boardRect.height ?? window.innerHeight) - note.height / 2;
+        const maxY = boardRect.height - note.height / 2;
 
         newX = clamp(newX, minX, maxX);
         newY = clamp(newY, minY, maxY);
