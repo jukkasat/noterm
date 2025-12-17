@@ -22,6 +22,7 @@ const Index = () => {
   const [darkMode, setDarkMode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const isMobile = window.innerWidth <= 768;
 
   // Load notes and settings from localStorage on mount
   useEffect(() => {
@@ -155,7 +156,7 @@ const Index = () => {
   const subtleTextColor = darkMode ? '#c0b5a5' : '#6b5638';
 
   return (
-    <div className="min-h-screen overflow-auto p-12" style={{ backgroundColor }}>
+    <div className={`min-h-screen overflow-auto p-12 note-container ${isMobile ? 'mobile' : ''}`} style={{ backgroundColor }}>
       <div className="relative min-h-[calc(100vh-6rem)] min-w-[1000px] rounded-lg" style={{ backgroundColor: boardColor }}>
         {/* Wooden border frame */}
         <div
