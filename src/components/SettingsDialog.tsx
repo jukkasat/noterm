@@ -9,20 +9,23 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useState } from 'react';
 import { AboutDialog } from '@/components/AboutDialog';
-
+import type { TextSize } from '@/types/note';
+import { RadioGroup, RadioGroupItem } from '@radix-ui/react-radio-group';
 
 interface SettingsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   darkMode: boolean;
   onDarkModeChange: (enabled: boolean) => void;
+  textSize: TextSize;
+  onTextSizeChange: (size: TextSize) => void;
 }
 
-export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange }: SettingsDialogProps) {
+export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange, textSize, onTextSizeChange }: SettingsDialogProps) {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const dialogBg = darkMode ? '#3a3530' : '#ffffff';
   const textColor = darkMode ? '#e0d5c5' : '#5a4a2f';
-  const descColor = darkMode ? '#c0b5a5' : '#817d78ff';
+  const descColor = darkMode ? '#c0b5a5' : '#58544fff';
 
   return (
     <>
@@ -49,6 +52,30 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange 
                 onCheckedChange={onDarkModeChange}
                 className="data-[state=checked]:bg-[#5a4a2f]"
               />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <Label style={{ color: textColor }}>Text size</Label>
+              <RadioGroup value={textSize} onValueChange={(value) => onTextSizeChange(value as TextSize)} className="flex items-center gap-4">
+                <div className="flex items-center space-x-1">
+                  <RadioGroupItem value="small" id="small" />
+                  <Label htmlFor="small" className="cursor-pointer text-xs" style={{ color: textColor }}>
+                    Small
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <RadioGroupItem value="normal" id="normal" />
+                  <Label htmlFor="normal" className="cursor-pointer text-xs" style={{ color: textColor }}>
+                    Normal
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <RadioGroupItem value="large" id="large" />
+                  <Label htmlFor="large" className="cursor-pointer text-xs" style={{ color: textColor }}>
+                    Large
+                  </Label>
+                </div>
+              </RadioGroup>
             </div>
           </div>
             <div className="grid gap-4">

@@ -14,3 +14,5 @@ export interface Note {
 export interface NotesState {
   notes: Note[];
 }
+
+export type TextSize = 'small' | 'normal' | 'large';

@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import type { Note } from '@/types/note';
+import type { Note, TextSize } from '@/types/note';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Pencil, Trash2, GripHorizontal } from 'lucide-react';
@@ -12,9 +12,10 @@ interface NoteCardProps {
   onUpdate: (id: string, updates: Partial<Note>) => void;
   onDelete: (id: string) => void;
   onDragStart: (id: string) => void;
+  textSize?: TextSize;
 }
 
-export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProps) {
+export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'normal' }: NoteCardProps) {
   const [subject, setSubject] = useState(note.subject || '');
   const [message, setMessage] = useState(note.message);
   const [isDragging, setIsDragging] = useState(false);
@@ -24,64 +25,6 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const cardRef = useRef<HTMLDivElement>(null);
-
-  const formatDate = (timestamp: number) => {
-    const date = new Date(timestamp);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
-  };
-
-  const handleDragStart = (clientX: number, clientY: number) => {
-    if (isEditing || isResizing) return;
-
-    // compute board (parent) rect so note coordinates are relative to board
-    const parent = cardRef.current?.offsetParent as HTMLElement | null;
-    const boardRect = parent ? parent.getBoundingClientRect() : { left: 0, top: 0 };
-
-    setIsDragging(true);
-    // store pointer offset relative to board-local note position
-    setDragOffset({
-      x: clientX - boardRect.left - note.x,
-      y: clientY - boardRect.top - note.y,
-    });
-    onDragStart(note.id);
-  };
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    handleDragStart(e.clientX, e.clientY);
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (e.touches.length === 1) {
-      const touch = e.touches[0];
-      handleDragStart(touch.clientX, touch.clientY);
-    }
-  };
-
-  const handleResizeStart = (e: React.MouseEvent | React.TouchEvent, clientX: number, clientY: number) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsResizing(true);
-    setResizeStart({
-      x: clientX,
-      y: clientY,
-      width: note.width,
-      height: note.height,
-    });
-  };
-
-  const handleResizeMouseDown = (e: React.MouseEvent) => {
-    handleResizeStart(e, e.clientX, e.clientY);
-  };
-
-  const handleResizeTouchStart = (e: React.TouchEvent) => {
-    if (e.touches.length === 1) {
-      const touch = e.touches[0];
-      handleResizeStart(e, touch.clientX, touch.clientY);
-    }
-  };
 
   useEffect(() => {
     const handleMove = (clientX: number, clientY: number) => {
@@ -152,6 +95,64 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
     };
   }, [isDragging, isResizing, dragOffset, resizeStart, note.id, onUpdate, onDelete, note.width, note.height]);
 
+  const formatDate = (timestamp: number) => {
+    const date = new Date(timestamp);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  const handleDragStart = (clientX: number, clientY: number) => {
+    if (isEditing || isResizing) return;
+
+    // compute board (parent) rect so note coordinates are relative to board
+    const parent = cardRef.current?.offsetParent as HTMLElement | null;
+    const boardRect = parent ? parent.getBoundingClientRect() : { left: 0, top: 0 };
+
+    setIsDragging(true);
+    // store pointer offset relative to board-local note position
+    setDragOffset({
+      x: clientX - boardRect.left - note.x,
+      y: clientY - boardRect.top - note.y,
+    });
+    onDragStart(note.id);
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    handleDragStart(e.clientX, e.clientY);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      handleDragStart(touch.clientX, touch.clientY);
+    }
+  };
+
+  const handleResizeStart = (e: React.MouseEvent | React.TouchEvent, clientX: number, clientY: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsResizing(true);
+    setResizeStart({
+      x: clientX,
+      y: clientY,
+      width: note.width,
+      height: note.height,
+    });
+  };
+
+  const handleResizeMouseDown = (e: React.MouseEvent) => {
+    handleResizeStart(e, e.clientX, e.clientY);
+  };
+
+  const handleResizeTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      handleResizeStart(e, touch.clientX, touch.clientY);
+    }
+  };
+
   const handleSave = () => {
     onUpdate(note.id, { subject, message, updatedAt: Date.now() });
     setIsEditing(false);
@@ -164,7 +165,7 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
   const handleConfirmDelete = () => {
     onDelete(note.id);
     setIsDeleting(false);
-};
+  };
 
   const handleClose = () => {
     setIsDeleting(false);
@@ -175,6 +176,31 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
     setMessage(note.message);
     setIsEditing(false);
   };
+
+  const getTextSizeClasses = () => {
+    switch (textSize) {
+      case 'small':
+        return {
+          subject: 'text-xs',
+          message: 'text-xs',
+          date: 'text-[10px]',
+        };
+      case 'large':
+        return {
+          subject: 'text-base',
+          message: 'text-base',
+          date: 'text-sm',
+        };
+      default: // normal
+        return {
+          subject: 'text-sm',
+          message: 'text-sm',
+          date: 'text-xs',
+        };
+    }
+  };
+
+  const sizeClasses = getTextSizeClasses();
 
   return (
     <Card
@@ -200,7 +226,7 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
             <div className="flex-1 overflow-hidden flex flex-col gap-2">
               <input
                 type="text"
-                className="bg-transparent border-b border-gray-400 outline-none text-sm font-handwriting font-semibold"
+                className={`bg-transparent border-b border-gray-400 outline-none ${sizeClasses.subject} font-handwriting font-semibold`}
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder="Subject (optional)..."
@@ -209,7 +235,7 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
                 onTouchStart={(e) => e.stopPropagation()}
               />
               <textarea
-                className="flex-1 bg-transparent border-none outline-none resize-none text-sm font-handwriting overflow-auto"
+                className={`flex-1 bg-transparent border-none outline-none resize-none ${sizeClasses.message} font-handwriting overflow-auto`}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder="Note content..."
@@ -260,17 +286,17 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart }: NoteCardProp
                 setIsEditing(true);
               }}>
               {note.subject && (
-                <p className="text-sm font-handwriting font-semibold mb-2 border-b border-gray-400 pb-1">
+                <p className={`${sizeClasses.subject} font-handwriting font-semibold mb-2 border-b border-gray-400 pb-1`}>
                   {note.subject}
                 </p>
               )}
-              <p className="text-sm whitespace-pre-wrap break-words font-handwriting">
+              <p className={`${sizeClasses.message} whitespace-pre-wrap break-words font-handwriting`}>
                 {note.message}
               </p>
             </div>
             <div className="mt-4">
               <div className="flex items-center justify-between">
-                <p className="text-xs text-gray-600 font-handwriting flex-1 text-center">
+                <p className={`${sizeClasses.date} text-gray-600 font-handwriting flex-1 text-center`}>
                   {formatDate(note.updatedAt)}
                 </p>
                 <div className="flex gap-1">
