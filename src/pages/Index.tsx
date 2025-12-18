@@ -6,9 +6,9 @@ import { NoteCard } from '@/components/NoteCard';
 import { AddNoteDialog } from '@/components/AddNoteDialog';
 import { NOTE_COLORS } from '@/components/noteColors';
 import { SettingsDialog } from '@/components/SettingsDialog';
-import type { Note } from '@/types/note';
 import { generateId } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
+import type { Note, TextSize } from '@/types/note';
 
 const Index = () => {
   useSeoMeta({
@@ -20,6 +20,7 @@ const Index = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [textSize, setTextSize] = useState<TextSize>('normal');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const isMobile = window.innerWidth <= 768;
@@ -39,6 +40,12 @@ const Index = () => {
     if (savedDarkMode === 'true') {
       setDarkMode(true);
     }
+
+    const savedTextSize = localStorage.getItem('noter-text-size') as TextSize;
+    if (savedTextSize && ['small', 'normal', 'large'].includes(savedTextSize)) {
+      setTextSize(savedTextSize);
+    }
+
   }, []);
 
   // Save notes to localStorage whenever they change
@@ -50,6 +57,11 @@ const Index = () => {
   useEffect(() => {
     localStorage.setItem('noter-dark-mode', darkMode.toString());
   }, [darkMode]);
+
+  // Save text size preference to localStorage
+  useEffect(() => {
+    localStorage.setItem('noter-text-size', textSize);
+  }, [textSize]);
 
   const handleAddNote = (message: string, subject?: string) => {
     const now = Date.now();
@@ -205,6 +217,7 @@ const Index = () => {
               onUpdate={handleUpdateNote}
               onDelete={handleDeleteNote}
               onDragStart={handleDragStart}
+              textSize={textSize}
             />
           ))}
 
@@ -266,6 +279,8 @@ const Index = () => {
           onOpenChange={setIsSettingsDialogOpen}
           darkMode={darkMode}
           onDarkModeChange={setDarkMode}
+          textSize={textSize}
+          onTextSizeChange={setTextSize}
         />
       </div>
     </div>

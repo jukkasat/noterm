@@ -15,8 +15,8 @@ interface AboutDialogProps {
 
 export function AboutDialog({ open, onOpenChange, darkMode = false }: AboutDialogProps) {
   const dialogBg = darkMode ? '#3a3530' : '#ffffff';
-  const textColor = darkMode ? '#e0d5c5' : '#645033ff';
-  const descColor = darkMode ? '#c0b5a5' : '#838181ff';
+  const textColor = darkMode ? '#e0d5c5' : '#5a4a2f';
+  const descColor = darkMode ? '#c0b5a5' : '#58544fff';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
