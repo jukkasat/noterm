@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { SettingsDialog } from '../../components/SettingsDialog';
+import { SettingsDialog } from '@/components/SettingsDialog';
 
 describe('SettingsDialog', () => {
   const mockOnOpenChange = vi.fn();

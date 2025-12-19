@@ -6,16 +6,6 @@ noter m. is a lightweight, digital note board built with React, TypeScript, Tail
 <img width="1098" height="550" alt="noter_m_preview" src="https://github.com/user-attachments/assets/486671df-db87-484e-81a6-d16108687c5f" />
 
 
-## Quick links
-
-- App entry / providers: [`src/App.tsx`](src/App.tsx)
-- Router: [`AppRouter.tsx`](AppRouter.tsx)
-- Main page (note board): [`src/pages/Index.tsx`](src/pages/Index.tsx)
-- Service worker: [`public/sw.js`](public/sw.js)
-- Package scripts and commands: [`package.json`](package.json)
-- ESLint custom rules and docs: [`eslint-rules/require-webmanifest.js`](eslint-rules/require-webmanifest.js), [`eslint-rules/README.md`](eslint-rules/README.md)
-
-
 ## Features
 
 - Post‑it style note board with drag & drop, edit, delete, and colors
@@ -23,15 +13,6 @@ noter m. is a lightweight, digital note board built with React, TypeScript, Tail
 - PWA support (manifest + service worker)
 - shadcn/ui component library patterns (Radix primitives, Tailwind)
 - Opinionated UX and accessibility patterns
-
-
-### Theme System
-
-The project includes a complete light/dark theme system using CSS custom properties. The theme can be controlled via:
-
-- `useTheme` hook for programmatic theme switching
-- CSS custom properties defined in `src/index.css`
-- Automatic dark mode support with `.dark` class
 
 
 ## Technology
@@ -78,17 +59,6 @@ The project includes a complete light/dark theme system using CSS custom propert
    - The `dev` script is defined in [package.json](package.json).
 
 
-## Build & test
-
-- Build for production:
-
-  `npm run build`
-
-- Deploy (project has a deploy script):
-
-  `npm run deploy`
-
-
 ## PWA notes
 
 - A web manifest is included at [public/manifest.json](public/manifest.json) and linked from [index.html](index.html). The project includes a service worker at [public/sw.js](public/sw.js) that caches core assets.
@@ -104,6 +74,33 @@ The project includes a complete light/dark theme system using CSS custom propert
 
   - Run specific test file:
   npx vitest run src/test/pages/index.test.tsx
+
+
+## Building and Deployment
+
+When deploying new changes:
+
+1. **Update service worker cache version** in [public/sw.js](public/sw.js):
+   ```javascript
+   const CACHE_NAME = 'noter-m-v1';
+   ```
+
+2. **Build the project**:
+   ```bash
+   npm run build
+   ```
+
+3. **Deploy** the `dist` folder to your hosting service:
+   ```bash
+   npm run deploy
+   ```
+
+### Why update CACHE_VERSION?
+
+The service worker caches assets for offline use. When you increment `CACHE_VERSION`:
+- Old caches are automatically deleted
+- Users get the latest version of your app
+- Prevents the issue where refreshing shows old content after server restart
 
 
 ## Contributing
