@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { clamp, generateId } from '../lib/utils';
+import { clamp, generateId } from '../../lib/utils';
 
 describe('clamp', () => {
   it('should return the value if it is within the range', () => {

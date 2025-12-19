@@ -102,6 +102,9 @@ The project includes a complete light/dark theme system using CSS custom propert
   - Run full validation (typecheck, lint, tests, build):
   npm run test
 
+  - Run specific test file:
+  npx vitest run src/test/pages/index.test.tsx
+
 
 ## Contributing
 
