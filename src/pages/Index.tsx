@@ -10,7 +10,7 @@ import { generateId } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
 import type { Note, TextSize } from '@/types/note';
 
-const Index = () => {
+const MainComponent = () => {
   useSeoMeta({
     title: 'noter m. - Your Digital Note Board',
     description: 'A beautiful digital note board for organizing your thoughts and things to remember',
@@ -287,4 +287,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default MainComponent;
