@@ -90,7 +90,12 @@ When deploying new changes:
    npm run build
    ```
 
-3. **Deploy** the `dist` folder to your hosting service:
+3. **Run QA / test version**:
+   ```bash
+  npm run preview
+   ```
+
+4. **Deploy** the `dist` folder to your hosting service:
    ```bash
    npm run deploy
    ```

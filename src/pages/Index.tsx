@@ -68,7 +68,7 @@ const MainComponent = () => {
     const newNote: Note = {
       id: generateId(),
       subject,
-      message,
+      content: message ? [{ type: 'text', id: generateId(), value: message }] : [],
       x: 100 + Math.random() * 200, // Top-left area: 100-300px from left
       y: 150 + Math.random() * 150, // Top area: 150-300px from top
       width: 250,
