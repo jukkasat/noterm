@@ -20,10 +20,4 @@ export interface NotesState {
   notes: Note[];
 }
 
-export interface CheckboxItem {
-  id: string;
-  text: string;
-  checked: boolean;
-}
-
 export type TextSize = 'small' | 'normal' | 'large';

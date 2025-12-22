@@ -453,7 +453,7 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'no
                         value={item.text}
                         onChange={(e) => handleContentChange(item.id, { text: e.target.value })}
                         onKeyDown={(e) => handleContentKeyDown(e, item.id, index)}
-                        placeholder="Checkbox item..."
+                        placeholder="New item..."
                         onClick={(e) => e.stopPropagation()}
                         onMouseDown={(e) => e.stopPropagation()}
                       />
