@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import {NoteCard } from '@/components/NoteCard';
 import type { Note } from '@/types/note';
 
@@ -312,7 +312,7 @@ describe('NoteCard', () => {
     }
   });
 
-  it('should allow adding text field after adding checkbox', () => {
+  it('should allow adding text field after adding checkbox', async () => {
     const onUpdate = vi.fn();
     const onDelete = vi.fn();
     const onDragStart = vi.fn();
@@ -343,6 +343,11 @@ describe('NoteCard', () => {
       const checkboxButton = screen.getByText('Checkbox');
       fireEvent.click(checkboxButton);
       
+      // Wait for the checkbox to be added
+      await waitFor(() => {
+        expect(screen.getByRole('checkbox')).toBeInTheDocument();
+      });
+      
       // Now click empty area - should be able to add text field
       const container = messageArea.closest('.flex-1');
       if (container) {
@@ -350,8 +355,10 @@ describe('NoteCard', () => {
         fireEvent.click(container);
         
         // Verify text field was added after checkbox
-        const afterCount = screen.getAllByRole('textbox').length;
-        expect(afterCount).toBeGreaterThan(beforeCount);
+        await waitFor(() => {
+          const afterCount = screen.getAllByRole('textbox').length;
+          expect(afterCount).toBeGreaterThan(beforeCount);
+        });
       }
     }
   });
