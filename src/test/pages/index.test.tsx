@@ -70,7 +70,8 @@ describe('Index page', () => {
         if (savedNotes) {
           const notes = JSON.parse(savedNotes);
           expect(notes).toHaveLength(1);
-          expect(notes[0].message).toBe('Test note');
+          expect(notes[0].content).toBeDefined();
+          expect(notes[0].content[0].value).toBe('Test note');
         }
       });
     }
@@ -79,7 +80,7 @@ describe('Index page', () => {
   it('should load notes from localStorage on mount', () => {
     const testNotes = [{
       id: '1',
-      message: 'Persisted note',
+      content: [{ type: 'text', id: '1', value: 'Persisted note' }],
       x: 100,
       y: 100,
       width: 250,
@@ -99,7 +100,7 @@ describe('Index page', () => {
   it('should delete a note', async () => {
     const testNotes = [{
       id: '1',
-      message: 'Note to delete',
+      content: [{ type: 'text', id: '1', value: 'Note to delete' }],
       x: 100,
       y: 100,
       width: 250,
@@ -128,7 +129,7 @@ describe('Index page', () => {
   it('should update note color', async () => {
     const testNotes = [{
       id: '1',
-      message: 'Test note',
+      content: [{ type: 'text', id: '1', value: 'Test note' }],
       x: 100,
       y: 100,
       width: 250,
@@ -161,8 +162,8 @@ describe('Index page', () => {
 
   it('should handle multiple notes', () => {
     const testNotes = [
-      { id: '1', message: 'First note', x: 100, y: 100, width: 250, height: 200, color: '#fef08a', createdAt: Date.now(), updatedAt: Date.now() },
-      { id: '2', message: 'Second note', x: 400, y: 100, width: 250, height: 200, color: '#bfdbfe', createdAt: Date.now(), updatedAt: Date.now() },
+      { id: '1', content: [{ type: 'text', id: '1', value: 'First note' }], x: 100, y: 100, width: 250, height: 200, color: '#fef08a', createdAt: Date.now(), updatedAt: Date.now() },
+      { id: '2', content: [{ type: 'text', id: '2', value: 'Second note' }], x: 400, y: 100, width: 250, height: 200, color: '#bfdbfe', createdAt: Date.now(), updatedAt: Date.now() },
     ];
     
     localStorage.setItem('noter-notes', JSON.stringify(testNotes));

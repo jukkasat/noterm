@@ -119,3 +119,7 @@
     padding: 0.5rem 0.5rem; /* Responsive style specifically for screens up to 768px */
   }
 }
+
+.text-input {
+    color: rgb(17 24 39 / var(--tw-text-opacity, 1));
+}
