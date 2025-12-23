@@ -169,7 +169,7 @@ const MainComponent = () => {
 
   return (
     <div className={`min-h-screen overflow-auto p-12 note-container ${isMobile ? 'mobile' : ''}`} style={{ backgroundColor }}>
-      <div className="relative min-h-[calc(100vh-6rem)] min-w-[1000px] rounded-lg" style={{ backgroundColor: boardColor }}>
+      <div className={`relative min-h-[calc(100vh-6rem)] ${isMobile ? 'min-w-[1000px]' : 'min-w-[1400px]'} rounded-lg`} style={{ backgroundColor: boardColor }}>
         {/* Wooden border frame */}
         <div
           className="absolute inset-0 pointer-events-none rounded-lg"

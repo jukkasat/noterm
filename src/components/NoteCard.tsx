@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useEffect } from 'react';
 import type { ContentItem, Note, TextSize } from '@/types/note';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,11 +7,8 @@ import { DialogFooter } from './ui/dialog';
 import { Pencil, Trash2, GripHorizontal, Plus, CheckSquare, Image as ImageIcon, Type } from 'lucide-react';
 import { clamp, generateId } from '@/lib/utils';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { useNoteCard } from '@/hooks/useNoteCard';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface NoteCardProps {
   note: Note;
@@ -22,19 +19,40 @@ interface NoteCardProps {
 }
 
 export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'normal' }: NoteCardProps) {
-  const [subject, setSubject] = useState(note.subject || '');
-  const [content, setContent] = useState<ContentItem[]>(note.content || []);
-  const [isDragging, setIsDragging] = useState(false);
-  const [isResizing, setIsResizing] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
-  const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const {
+    subject,
+    setSubject,
+    content,
+    setContent,
+    isDragging,
+    setIsDragging,
+    isResizing,
+    setIsResizing,
+    isEditing,
+    setIsEditing,
+    isDeleting,
+    setIsDeleting,
+    zoomedImage,
+    setZoomedImage,
+    dragOffset,
+    resizeStart,
+    setResizeStart,
+    isAddMenuOpen,
+    setIsAddMenuOpen,
+    cardRef,
+    fileInputRef,
+    handleSave,
+    handleCancel,
+    handleContentChange,
+    handleRemoveContent,
+    handleAddCheckbox,
+    handleAddText,
+    handleAddImage,
+    handleImageUpload,
+    handleDragStart,
+  } = useNoteCard({ note, onUpdate, onDragStart });
 
+  // Handle drag and resize
   useEffect(() => {
     const handleMove = (clientX: number, clientY: number) => {
       if (isDragging) {
@@ -102,7 +120,7 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'no
       document.removeEventListener('touchmove', handleTouchMove);
       document.removeEventListener('touchend', handleEnd);
     };
-  }, [isDragging, isResizing, dragOffset, resizeStart, note.id, onUpdate, note.width, note.height]);
+  }, [isDragging, isResizing, dragOffset, resizeStart, note.id, onUpdate, note.width, note.height, setIsDragging, setIsResizing, cardRef]);
 
   // Auto-resize all textareas when content changes or editing mode changes
   useEffect(() => {
@@ -124,22 +142,6 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'no
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
-  };
-
-  const handleDragStart = (clientX: number, clientY: number) => {
-    if (isEditing || isResizing) return;
-
-    // compute board (parent) rect so note coordinates are relative to board
-    const parent = cardRef.current?.offsetParent as HTMLElement | null;
-    const boardRect = parent ? parent.getBoundingClientRect() : { left: 0, top: 0 };
-
-    setIsDragging(true);
-    // store pointer offset relative to board-local note position
-    setDragOffset({
-      x: clientX - boardRect.left - note.x,
-      y: clientY - boardRect.top - note.y,
-    });
-    onDragStart(note.id);
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -176,21 +178,6 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'no
     }
   };
 
-  const handleSave = () => {
-    // Check if there are any empty text fields
-    const hasEmptyTextField = content.some(
-      item => item.type === 'text' && (!item.value || item.value.trim() === '')
-    );
-    
-    // Don't save if there are empty text fields
-    if (hasEmptyTextField) {
-      return;
-    }
-    
-    onUpdate(note.id, { subject, content, updatedAt: Date.now() });
-    setIsEditing(false);
-  };
-
   const handleDelete = () => {
     setIsDeleting(true);
   };
@@ -202,68 +189,6 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'no
 
   const handleClose = () => {
     setIsDeleting(false);
-  };
-
-  const handleCancel = () => {
-    setSubject(note.subject || '');
-    setContent(note.content || []);
-    setIsEditing(false);
-  };
-
-  const handleAddCheckbox = () => {
-    const newItem: ContentItem = {
-      type: 'checkbox',
-      id: generateId(),
-      text: '',
-      checked: false,
-    };
-
-    setContent([...content, newItem]);
-    setIsAddMenuOpen(false);
-
-    // Focus the new checkbox input after a short delay
-    setTimeout(() => {
-      const checkboxInputs = document.querySelectorAll('.checkbox-input');
-      if (checkboxInputs.length > 0) {
-        (checkboxInputs[checkboxInputs.length - 1] as HTMLInputElement).focus();
-      }
-    }, 50);
-  };
-
-  const handleAddText = () => {
-    const newItem: ContentItem = {
-      type: 'text',
-      id: generateId(),
-      value: '',
-    };
-
-    setContent([...content, newItem]);
-    setIsAddMenuOpen(false);
-
-    // Focus the new text input after a short delay
-    setTimeout(() => {
-      const textInputs = document.querySelectorAll('.text-input');
-      if (textInputs.length > 0) {
-        const lastInput = textInputs[textInputs.length - 1] as HTMLTextAreaElement;
-        lastInput.focus();
-        resizeTextArea(lastInput);
-      }
-    }, 50);
-  };
-
-  const handleAddImage = () => {
-    fileInputRef.current?.click();
-    setIsAddMenuOpen(false);
-  };
-
-  const handleContentChange = (id: string, updates: Partial<ContentItem>) => {
-    setContent(content.map(item => 
-      item.id === id ? { ...item, ...updates } as ContentItem : item
-    ));
-  };
-
-  const handleRemoveContent = (id: string) => {
-    setContent(content.filter(item => item.id !== id));
   };
 
   const handleContentKeyDown = (e: React.KeyboardEvent, id: string, index: number) => {
@@ -304,22 +229,6 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'no
     const newHeight = Math.min(textarea.scrollHeight + 8, maxHeight);
     style.minHeight = `${newHeight}px`;
     style.height = `${textarea.scrollHeight + 4}px`;
-  };
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const newItem: ContentItem = {
-          type: 'image',
-          id: generateId(),
-          url: event.target?.result as string,
-        };
-        setContent([...content, newItem]);
-      };
-      reader.readAsDataURL(file);
-    }
   };
 
   const getTextSizeClasses = () => {
