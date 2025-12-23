@@ -349,10 +349,12 @@ describe('NoteCard', () => {
       });
       
       // Now click empty area - should be able to add text field
-      const container = messageArea.closest('.flex-1');
-      if (container) {
+      // Find the container div with overflow-y-auto class (the content area)
+      const contentContainer = document.querySelector('.flex-1.overflow-y-auto');
+      if (contentContainer) {
         const beforeCount = screen.getAllByRole('textbox').length;
-        fireEvent.click(container);
+        // Click directly on the container to trigger the onClick handler
+        fireEvent.click(contentContainer, { target: contentContainer });
         
         // Verify text field was added after checkbox
         await waitFor(() => {
