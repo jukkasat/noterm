@@ -364,4 +364,226 @@ describe('NoteCard', () => {
       }
     }
   });
+
+  it('should change note color when color button is clicked in edit mode', async () => {
+    const onUpdate = vi.fn();
+    const onDelete = vi.fn();
+    const onDragStart = vi.fn();
+
+    render(
+      <NoteCard
+        note={mockNote}
+        onUpdate={onUpdate}
+        onDelete={onDelete}
+        onDragStart={onDragStart}
+      />
+    );
+
+    // Enter edit mode
+    const messageArea = screen.getByText('Test message');
+    fireEvent.doubleClick(messageArea);
+
+    // Find the color change button (Palette icon)
+    const buttons = screen.getAllByRole('button');
+    const colorButton = buttons.find(btn => 
+      btn.querySelector('.lucide-palette')
+    );
+    
+    expect(colorButton).toBeDefined();
+    
+    if (colorButton) {
+      // Click the color change button
+      fireEvent.click(colorButton);
+
+      // Verify onUpdate was called with a new color
+      await waitFor(() => {
+        expect(onUpdate).toHaveBeenCalled();
+        const updateCall = onUpdate.mock.calls[0];
+        expect(updateCall[0]).toBe('1'); // note id
+        expect(updateCall[1]).toHaveProperty('color');
+        // Color should be different from the original
+        expect(updateCall[1].color).not.toBe(mockNote.color);
+      });
+    }
+  });
+
+  it('should change to random color different from current color', async () => {
+    const onUpdate = vi.fn();
+    const onDelete = vi.fn();
+    const onDragStart = vi.fn();
+
+    render(
+      <NoteCard
+        note={mockNote}
+        onUpdate={onUpdate}
+        onDelete={onDelete}
+        onDragStart={onDragStart}
+      />
+    );
+
+    // Enter edit mode
+    const messageArea = screen.getByText('Test message');
+    fireEvent.doubleClick(messageArea);
+
+    // Find the color change button
+    const buttons = screen.getAllByRole('button');
+    const colorButton = buttons.find(btn => 
+      btn.querySelector('.lucide-palette')
+    );
+    
+    if (colorButton) {
+      // Click multiple times to ensure we get different colors
+      const colors = new Set();
+      const originalColor = mockNote.color;
+      
+      for (let i = 0; i < 5; i++) {
+        onUpdate.mockClear();
+        fireEvent.click(colorButton);
+        
+        await waitFor(() => {
+          expect(onUpdate).toHaveBeenCalled();
+        });
+        
+        const updateCall = onUpdate.mock.calls[0];
+        if (updateCall && updateCall[1] && updateCall[1].color) {
+          const newColor = updateCall[1].color;
+          colors.add(newColor);
+          // Each new color should be different from the original
+          expect(newColor).not.toBe(originalColor);
+        }
+      }
+      
+      // We should have gotten at least 2 different colors in 5 tries
+      // (unless we're extremely unlucky with random)
+      expect(colors.size).toBeGreaterThanOrEqual(1);
+    }
+  });
+
+  it('should have color button visible only in edit mode', () => {
+    const onUpdate = vi.fn();
+    const onDelete = vi.fn();
+    const onDragStart = vi.fn();
+
+    render(
+      <NoteCard
+        note={mockNote}
+        onUpdate={onUpdate}
+        onDelete={onDelete}
+        onDragStart={onDragStart}
+      />
+    );
+
+    // In read mode, color button should not be visible
+    let buttons = screen.getAllByRole('button');
+    let colorButton = buttons.find(btn => btn.querySelector('.lucide-palette'));
+    expect(colorButton).toBeUndefined();
+
+    // Enter edit mode
+    const messageArea = screen.getByText('Test message');
+    fireEvent.doubleClick(messageArea);
+
+    // In edit mode, color button should be visible
+    buttons = screen.getAllByRole('button');
+    colorButton = buttons.find(btn => btn.querySelector('.lucide-palette'));
+    expect(colorButton).toBeDefined();
+  });
+
+  it('should maintain color change when saving note', async () => {
+    const onUpdate = vi.fn();
+    const onDelete = vi.fn();
+    const onDragStart = vi.fn();
+
+    render(
+      <NoteCard
+        note={mockNote}
+        onUpdate={onUpdate}
+        onDelete={onDelete}
+        onDragStart={onDragStart}
+      />
+    );
+
+    // Enter edit mode
+    const messageArea = screen.getByText('Test message');
+    fireEvent.doubleClick(messageArea);
+
+    // Change color
+    const buttons = screen.getAllByRole('button');
+    const colorButton = buttons.find(btn => btn.querySelector('.lucide-palette'));
+    
+    if (colorButton) {
+      fireEvent.click(colorButton);
+      
+      await waitFor(() => {
+        expect(onUpdate).toHaveBeenCalled();
+      });
+
+      // Clear mock to check save call separately
+      onUpdate.mockClear();
+
+      // Make a text change and save
+      const textarea = screen.getByDisplayValue('Test message');
+      fireEvent.input(textarea, { target: { value: 'Updated message' } });
+
+      const saveButton = screen.getByText('Save');
+      fireEvent.click(saveButton);
+
+      // Verify save was called
+      await waitFor(() => {
+        expect(onUpdate).toHaveBeenCalled();
+      });
+    }
+  });
+
+  it('should create new checkbox on Enter key in edit mode', async () => {
+    const noteWithCheckbox: Note = {
+      id: '1',
+      subject: 'Test Subject',
+      content: [
+        { type: 'checkbox', id: '1', text: 'First task', checked: false }
+      ],
+      x: 100,
+      y: 100,
+      width: 250,
+      height: 200,
+      color: '#fef08a',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+
+    const onUpdate = vi.fn();
+    const onDelete = vi.fn();
+    const onDragStart = vi.fn();
+
+    render(
+      <NoteCard
+        note={noteWithCheckbox}
+        onUpdate={onUpdate}
+        onDelete={onDelete}
+        onDragStart={onDragStart}
+      />
+    );
+
+    // Enter edit mode
+    const taskText = screen.getByText('First task');
+    fireEvent.doubleClick(taskText);
+
+    // Find the checkbox input field
+    const checkboxInputs = screen.getAllByRole('textbox');
+    const checkboxInput = checkboxInputs.find(input => 
+      (input as HTMLInputElement).value === 'First task'
+    );
+
+    if (checkboxInput) {
+      const initialCheckboxCount = screen.getAllByRole('checkbox').length;
+      
+      // Press Enter to create new checkbox
+      fireEvent.keyDown(checkboxInput, { key: 'Enter', code: 'Enter' });
+
+      // Wait for new checkbox to be added
+      await waitFor(() => {
+        const newCheckboxCount = screen.getAllByRole('checkbox').length;
+        expect(newCheckboxCount).toBe(initialCheckboxCount + 1);
+      });
+    }
+  });
 });

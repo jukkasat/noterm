@@ -8,6 +8,7 @@ import { useNoteCard } from '@/hooks/useNoteCard';
 import { useNoteDragResize } from '@/hooks/useNoteDragResize';
 import { NoteEditMode } from '@/components/notecard/NoteEditMode';
 import { NoteReadMode } from '@/components/notecard/NoteReadMode';
+import { NOTE_COLORS } from '@/components/noteColors';
 
 interface NoteCardProps {
   note: Note;
@@ -89,6 +90,18 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'no
       const touch = e.touches[0];
       handleResizeStart(e, touch.clientX, touch.clientY);
     }
+  };
+
+  const handleColorChange = () => {
+    const currentColorIndex = NOTE_COLORS.indexOf(note.color);
+    let newColorIndex;
+    
+    // Get random index different from current
+    do {
+      newColorIndex = Math.floor(Math.random() * NOTE_COLORS.length);
+    } while (newColorIndex === currentColorIndex && NOTE_COLORS.length > 1);
+    
+    onUpdate(note.id, { color: NOTE_COLORS[newColorIndex] });
   };
 
   const handleDelete = () => {
@@ -178,6 +191,7 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'no
             handleImageUpload={handleImageUpload}
             setContent={setContent}
             resizeTextArea={resizeTextArea}
+            onColorChange={handleColorChange}
           />
         ) : (
           <NoteReadMode
