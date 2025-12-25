@@ -4,6 +4,7 @@ import { Plus, CheckSquare, Image as ImageIcon, Type, Trash2, Palette } from 'lu
 import { Checkbox } from '@/components/ui/checkbox';
 import { generateId } from '@/lib/utils';
 import type { ContentItem } from '@/types/note';
+import { useEffect, useState } from 'react';
 
 interface NoteEditModeProps {
   subject: string;
@@ -46,6 +47,23 @@ export function NoteEditMode({
   resizeTextArea,
   onColorChange,
 }: NoteEditModeProps) {
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      const savedDarkMode = localStorage.getItem('noter-dark-mode');
+      setDarkMode(savedDarkMode === 'true');
+    };
+    
+    // Check immediately
+    checkDarkMode();
+    
+    // Check every 100ms for changes
+    const interval = setInterval(checkDarkMode, 100);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   const handleContentKeyDown = (e: React.KeyboardEvent, id: string, index: number) => {
     if (e.key === 'Enter' && content[index].type === 'checkbox') {
       e.preventDefault();
@@ -233,7 +251,12 @@ export function NoteEditMode({
             </Button>
           </PopoverTrigger>
           <PopoverContent 
-            className="w-48 p-2" 
+            className="w-48 p-2 border-gray-200" 
+            style={{ 
+              backgroundColor: darkMode ? '#3a3530' : '#ffffff',
+              color: darkMode ? '#e0d5c5' : '#3a3530',
+              borderColor: darkMode ? '#8b6f47' : '#e5e7eb'
+            }}
             onClick={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
           >

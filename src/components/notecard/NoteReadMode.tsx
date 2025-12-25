@@ -35,7 +35,7 @@ export function NoteReadMode({
           onEdit();
         }}>
         {note.subject && (
-          <p className={`${sizeClasses.subject} font-handwriting font-semibold mb-2 border-b border-gray-400 pb-1`}>
+          <p className={`${sizeClasses.subject} font-handwriting font-semibold mb-2 border-b border-gray-400 pb-1 text-gray-800`}>
             {note.subject}
           </p>
         )}
@@ -44,7 +44,7 @@ export function NoteReadMode({
           {content.map((item) => (
             <div key={item.id}>
               {item.type === 'text' && item.value && (
-                <p className={`${sizeClasses.message} whitespace-pre-wrap break-words font-handwriting`}>
+                <p className={`${sizeClasses.message} whitespace-pre-wrap break-words font-handwriting text-gray-800`}>
                   {item.value}
                 </p>
               )}
@@ -66,7 +66,7 @@ export function NoteReadMode({
                     onMouseDown={(e) => e.stopPropagation()}
                     onTouchStart={(e) => e.stopPropagation()}
                   />
-                  <span className={`${sizeClasses.message} font-handwriting ${item.checked ? 'line-through opacity-60' : ''}`}>
+                  <span className={`${sizeClasses.message} font-handwriting text-gray-800 ${item.checked ? 'line-through opacity-60' : ''}`}>
                     {item.text}
                   </span>
                 </div>
