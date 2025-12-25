@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Plus, CheckSquare, Image as ImageIcon, Type, Trash2 } from 'lucide-react';
+import { Plus, CheckSquare, Image as ImageIcon, Type, Trash2, Palette } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { generateId } from '@/lib/utils';
 import type { ContentItem } from '@/types/note';
@@ -23,6 +23,7 @@ interface NoteEditModeProps {
   handleImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setContent: (content: ContentItem[]) => void;
   resizeTextArea: (textarea: HTMLTextAreaElement) => void;
+  onColorChange: () => void;
 }
 
 export function NoteEditMode({
@@ -43,6 +44,7 @@ export function NoteEditMode({
   handleImageUpload,
   setContent,
   resizeTextArea,
+  onColorChange,
 }: NoteEditModeProps) {
   const handleContentKeyDown = (e: React.KeyboardEvent, id: string, index: number) => {
     if (e.key === 'Enter' && content[index].type === 'checkbox') {
@@ -62,14 +64,6 @@ export function NoteEditMode({
       ];
       
       setContent(updatedContent);
-
-      setTimeout(() => {
-        const checkboxInputs = document.querySelectorAll('.checkbox-input');
-        const checkboxIndex = content.slice(0, index + 1).filter(item => item.type === 'checkbox').length;
-        if (checkboxInputs[checkboxIndex]) {
-          (checkboxInputs[checkboxIndex] as HTMLInputElement).focus();
-        }
-      }, 50);
     }
   };
 
@@ -88,15 +82,6 @@ export function NoteEditMode({
               value: '',
             };
             setContent([...content, newItem]);
-            
-            setTimeout(() => {
-              const textInputs = document.querySelectorAll('.text-input');
-              if (textInputs.length > 0) {
-                const lastInput = textInputs[textInputs.length - 1] as HTMLTextAreaElement;
-                lastInput.focus();
-                resizeTextArea(lastInput);
-              }
-            }, 50);
           }
         }}
       >
@@ -284,6 +269,20 @@ export function NoteEditMode({
             </div>
           </PopoverContent>
         </Popover>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-6 px-2 text-xs"
+          onClick={(e) => {
+            e.stopPropagation();
+            onColorChange();
+          }}
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          title="Change color"
+        >
+          <Palette className="h-3 w-3" />
+        </Button>
         <input
           ref={fileInputRef}
           type="file"
