@@ -16,9 +16,11 @@ interface NoteCardProps {
   onDelete: (id: string) => void;
   onDragStart: (id: string) => void;
   textSize?: TextSize;
+  editingNoteId: string | null;
+  onEditingChange: (id: string | null) => void;
 }
 
-export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'normal' }: NoteCardProps) {
+export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'normal', editingNoteId, onEditingChange }: NoteCardProps) {
   const { subject, setSubject, content,
     setContent, isDragging, setIsDragging,
     isResizing, setIsResizing, isEditing,
@@ -30,6 +32,15 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'no
     handleAddCheckbox, handleAddText, handleAddImage,
     handleImageUpload, handleDragStart, cardRef
   } = useNoteCard({ note, onUpdate, onDragStart });
+
+  // Notify parent when edit state changes
+  useEffect(() => {
+    if (isEditing) {
+      onEditingChange(note.id);
+    } else if (editingNoteId === note.id) {
+      onEditingChange(null);
+    }
+  }, [isEditing, note.id, editingNoteId, onEditingChange]);
 
   // Handle drag and resize
   useNoteDragResize( isDragging, isResizing, dragOffset, resizeStart,
@@ -59,10 +70,33 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'no
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    // If another note is being edited, blink that note and prevent interaction
+    if (editingNoteId && editingNoteId !== note.id) {
+      // Find the editing note and trigger its blink
+      const editingCard = document.querySelector(`[data-note-id="${editingNoteId}"]`);
+      if (editingCard) {
+        editingCard.classList.add('blink-border');
+        setTimeout(() => {
+          editingCard.classList.remove('blink-border');
+        }, 600); // 2 blinks * 300ms
+      }
+      return;
+    }
     handleDragStart(e.clientX, e.clientY);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
+    // If another note is being edited, blink that note and prevent interaction
+    if (editingNoteId && editingNoteId !== note.id) {
+      const editingCard = document.querySelector(`[data-note-id="${editingNoteId}"]`);
+      if (editingCard) {
+        editingCard.classList.add('blink-border');
+        setTimeout(() => {
+          editingCard.classList.remove('blink-border');
+        }, 600);
+      }
+      return;
+    }
     if (e.touches.length === 1) {
       const touch = e.touches[0];
       handleDragStart(touch.clientX, touch.clientY);
@@ -156,6 +190,7 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'no
   return (
     <Card
       ref={cardRef}
+      data-note-id={note.id}
       className="absolute shadow-lg hover:shadow-xl transition-shadow duration-200"
       style={{
         left: `${note.x}px`,
@@ -198,7 +233,21 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'no
             note={note}
             content={content}
             sizeClasses={sizeClasses}
-            onEdit={() => setIsEditing(true)}
+            onEdit={() => {
+              // Only allow editing if no other note is being edited
+              if (!editingNoteId || editingNoteId === note.id) {
+                setIsEditing(true);
+              } else {
+                // Blink the currently edited note
+                const editingCard = document.querySelector(`[data-note-id="${editingNoteId}"]`);
+                if (editingCard) {
+                  editingCard.classList.add('blink-border');
+                  setTimeout(() => {
+                    editingCard.classList.remove('blink-border');
+                  }, 600);
+                }
+              }
+            }}
             onDelete={handleDelete}
             onImageClick={setZoomedImage}
             formatDate={formatDate}

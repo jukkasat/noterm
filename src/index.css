@@ -103,6 +103,19 @@
   .font-handwriting {
     font-family: 'Comic Sans MS', 'Chalkboard SE', 'Bradley Hand', cursive;
   }
+
+  @keyframes blink-border {
+    0%, 100% {
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0);
+    }
+    50% {
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.8);
+    }
+  }
+
+  .blink-border {
+    animation: blink-border 300ms ease-in-out 2;
+  }
 }
 
 .note-container {

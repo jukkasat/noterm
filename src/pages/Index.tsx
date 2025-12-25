@@ -21,6 +21,7 @@ const MainComponent = () => {
   const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [textSize, setTextSize] = useState<TextSize>('normal');
+  const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const isMobile = window.innerWidth <= 768;
@@ -89,6 +90,10 @@ const MainComponent = () => {
   };
 
   const handleDragStart = (id: string) => {
+    // Don't allow dragging if a different note is being edited
+    if (editingNoteId && editingNoteId !== id) {
+      return;
+    }
     // Bring note to front by reordering
     const noteIndex = notes.findIndex(n => n.id === id);
     if (noteIndex > -1) {
@@ -109,10 +114,8 @@ const MainComponent = () => {
     const dd = String(now.getDate()).padStart(2, '0');
     const mm = String(now.getMonth() + 1).padStart(2, '0'); // month
     const yy = String(now.getFullYear()).substring(2);
-    const hh = String(now.getHours()).padStart(2, '0');
-    const min = String(now.getMinutes()).padStart(2, '0');
-    const ss = String(now.getSeconds()).padStart(2, '0');
-    link.download = `noter_backup_${dd}_${mm}_${yy}_${hh}_${min}_${ss}.json`;
+    const filename = `noter_backup_${dd}_${mm}_${yy}.json`;
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -120,7 +123,7 @@ const MainComponent = () => {
 
     toast({
       title: 'Notes saved!',
-      description: 'Your notes have been exported to a JSON file.',
+      description: `Your Notes are saved as: ${filename}`,
     });
   };
 
@@ -218,6 +221,8 @@ const MainComponent = () => {
               onDelete={handleDeleteNote}
               onDragStart={handleDragStart}
               textSize={textSize}
+              editingNoteId={editingNoteId}
+              onEditingChange={setEditingNoteId}
             />
           ))}
 

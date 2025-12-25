@@ -21,6 +21,7 @@ describe('NoteCard', () => {
     const onUpdate = vi.fn();
     const onDelete = vi.fn();
     const onDragStart = vi.fn();
+    const onEditingChange = vi.fn();
 
     render(
       <NoteCard
@@ -28,6 +29,8 @@ describe('NoteCard', () => {
         onUpdate={onUpdate}
         onDelete={onDelete}
         onDragStart={onDragStart}
+        editingNoteId={null}
+        onEditingChange={onEditingChange}
       />
     );
 
@@ -39,6 +42,7 @@ describe('NoteCard', () => {
     const onUpdate = vi.fn();
     const onDelete = vi.fn();
     const onDragStart = vi.fn();
+    const onEditingChange = vi.fn();
 
     render(
       <NoteCard
@@ -46,6 +50,8 @@ describe('NoteCard', () => {
         onUpdate={onUpdate}
         onDelete={onDelete}
         onDragStart={onDragStart}
+        editingNoteId={null}
+        onEditingChange={onEditingChange}
       />
     );
 
@@ -74,6 +80,7 @@ describe('NoteCard', () => {
     const onUpdate = vi.fn();
     const onDelete = vi.fn();
     const onDragStart = vi.fn();
+    const onEditingChange = vi.fn();
 
     render(
       <NoteCard
@@ -81,6 +88,8 @@ describe('NoteCard', () => {
         onUpdate={onUpdate}
         onDelete={onDelete}
         onDragStart={onDragStart}
+        editingNoteId={null}
+        onEditingChange={onEditingChange}
       />
     );
 
@@ -105,6 +114,7 @@ describe('NoteCard', () => {
     const onUpdate = vi.fn();
     const onDelete = vi.fn();
     const onDragStart = vi.fn();
+    const onEditingChange = vi.fn();
 
     const { rerender } = render(
       <NoteCard
@@ -112,6 +122,8 @@ describe('NoteCard', () => {
         onUpdate={onUpdate}
         onDelete={onDelete}
         onDragStart={onDragStart}
+        editingNoteId={null}
+        onEditingChange={onEditingChange}
         textSize="small"
       />
     );
@@ -125,6 +137,8 @@ describe('NoteCard', () => {
         onUpdate={onUpdate}
         onDelete={onDelete}
         onDragStart={onDragStart}
+        editingNoteId={null}
+        onEditingChange={onEditingChange}
         textSize="large"
       />
     );
@@ -152,6 +166,7 @@ describe('NoteCard', () => {
     const onUpdate = vi.fn();
     const onDelete = vi.fn();
     const onDragStart = vi.fn();
+    const onEditingChange = vi.fn();
 
     render(
       <NoteCard
@@ -159,6 +174,8 @@ describe('NoteCard', () => {
         onUpdate={onUpdate}
         onDelete={onDelete}
         onDragStart={onDragStart}
+        editingNoteId={null}
+        onEditingChange={onEditingChange}
       />
     );
 
@@ -196,6 +213,7 @@ describe('NoteCard', () => {
     const onUpdate = vi.fn();
     const onDelete = vi.fn();
     const onDragStart = vi.fn();
+    const onEditingChange = vi.fn();
 
     render(
       <NoteCard
@@ -203,6 +221,8 @@ describe('NoteCard', () => {
         onUpdate={onUpdate}
         onDelete={onDelete}
         onDragStart={onDragStart}
+        editingNoteId={null}
+        onEditingChange={onEditingChange}
       />
     );
 
@@ -231,6 +251,7 @@ describe('NoteCard', () => {
     const onUpdate = vi.fn();
     const onDelete = vi.fn();
     const onDragStart = vi.fn();
+    const onEditingChange = vi.fn();
 
     render(
       <NoteCard
@@ -238,6 +259,8 @@ describe('NoteCard', () => {
         onUpdate={onUpdate}
         onDelete={onDelete}
         onDragStart={onDragStart}
+        editingNoteId={null}
+        onEditingChange={onEditingChange}
       />
     );
 
@@ -254,6 +277,7 @@ describe('NoteCard', () => {
     const onUpdate = vi.fn();
     const onDelete = vi.fn();
     const onDragStart = vi.fn();
+    const onEditingChange = vi.fn();
 
     render(
       <NoteCard
@@ -261,6 +285,8 @@ describe('NoteCard', () => {
         onUpdate={onUpdate}
         onDelete={onDelete}
         onDragStart={onDragStart}
+        editingNoteId={null}
+        onEditingChange={onEditingChange}
       />
     );
 
@@ -283,6 +309,7 @@ describe('NoteCard', () => {
     const onUpdate = vi.fn();
     const onDelete = vi.fn();
     const onDragStart = vi.fn();
+    const onEditingChange = vi.fn();
 
     render(
       <NoteCard
@@ -290,6 +317,8 @@ describe('NoteCard', () => {
         onUpdate={onUpdate}
         onDelete={onDelete}
         onDragStart={onDragStart}
+        editingNoteId={null}
+        onEditingChange={onEditingChange}
       />
     );
 
@@ -316,6 +345,7 @@ describe('NoteCard', () => {
     const onUpdate = vi.fn();
     const onDelete = vi.fn();
     const onDragStart = vi.fn();
+    const onEditingChange = vi.fn();
 
     render(
       <NoteCard
@@ -323,6 +353,8 @@ describe('NoteCard', () => {
         onUpdate={onUpdate}
         onDelete={onDelete}
         onDragStart={onDragStart}
+        editingNoteId={null}
+        onEditingChange={onEditingChange}
       />
     );
 
@@ -369,6 +401,7 @@ describe('NoteCard', () => {
     const onUpdate = vi.fn();
     const onDelete = vi.fn();
     const onDragStart = vi.fn();
+    const onEditingChange = vi.fn();
 
     render(
       <NoteCard
@@ -376,6 +409,8 @@ describe('NoteCard', () => {
         onUpdate={onUpdate}
         onDelete={onDelete}
         onDragStart={onDragStart}
+        editingNoteId={null}
+        onEditingChange={onEditingChange}
       />
     );
 
@@ -411,6 +446,7 @@ describe('NoteCard', () => {
     const onUpdate = vi.fn();
     const onDelete = vi.fn();
     const onDragStart = vi.fn();
+    const onEditingChange = vi.fn();
 
     render(
       <NoteCard
@@ -418,6 +454,8 @@ describe('NoteCard', () => {
         onUpdate={onUpdate}
         onDelete={onDelete}
         onDragStart={onDragStart}
+        editingNoteId={null}
+        onEditingChange={onEditingChange}
       />
     );
 
@@ -463,6 +501,7 @@ describe('NoteCard', () => {
     const onUpdate = vi.fn();
     const onDelete = vi.fn();
     const onDragStart = vi.fn();
+    const onEditingChange = vi.fn();
 
     render(
       <NoteCard
@@ -470,6 +509,8 @@ describe('NoteCard', () => {
         onUpdate={onUpdate}
         onDelete={onDelete}
         onDragStart={onDragStart}
+        editingNoteId={null}
+        onEditingChange={onEditingChange}
       />
     );
 
@@ -492,6 +533,7 @@ describe('NoteCard', () => {
     const onUpdate = vi.fn();
     const onDelete = vi.fn();
     const onDragStart = vi.fn();
+    const onEditingChange = vi.fn();
 
     render(
       <NoteCard
@@ -499,6 +541,8 @@ describe('NoteCard', () => {
         onUpdate={onUpdate}
         onDelete={onDelete}
         onDragStart={onDragStart}
+        editingNoteId={null}
+        onEditingChange={onEditingChange}
       />
     );
 
@@ -553,6 +597,7 @@ describe('NoteCard', () => {
     const onUpdate = vi.fn();
     const onDelete = vi.fn();
     const onDragStart = vi.fn();
+    const onEditingChange = vi.fn();
 
     render(
       <NoteCard
@@ -560,6 +605,8 @@ describe('NoteCard', () => {
         onUpdate={onUpdate}
         onDelete={onDelete}
         onDragStart={onDragStart}
+        editingNoteId={null}
+        onEditingChange={onEditingChange}
       />
     );
 

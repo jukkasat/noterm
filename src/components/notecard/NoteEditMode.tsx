@@ -64,6 +64,14 @@ export function NoteEditMode({
       ];
       
       setContent(updatedContent);
+
+      setTimeout(() => {
+        const checkboxInputs = document.querySelectorAll('.checkbox-input');
+        const checkboxIndex = content.slice(0, index + 1).filter(item => item.type === 'checkbox').length;
+        if (checkboxInputs[checkboxIndex]) {
+          (checkboxInputs[checkboxIndex] as HTMLInputElement).focus();
+        }
+      }, 50);
     }
   };
 
@@ -137,7 +145,7 @@ export function NoteEditMode({
                 />
                 <input
                   type="text"
-                  className={`checkbox-input flex-1 bg-transparent border-b border-gray-300 outline-none ${sizeClasses.message} font-handwriting text-gray-900 dark:text-gray-100`}
+                  className={`checkbox-input flex-1 bg-transparent border-b border-gray-300 outline-none ${sizeClasses.message} font-handwriting text-gray-900 dark:text-gray-100 min-w-0`}
                   value={item.text}
                   onChange={(e) => onContentChange(item.id, { text: e.target.value })}
                   onKeyDown={(e) => handleContentKeyDown(e, item.id, index)}
