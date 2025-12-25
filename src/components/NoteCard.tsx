@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import type { Note, TextSize } from '@/types/note';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@radix-ui/react-dialog';
@@ -21,8 +21,6 @@ interface NoteCardProps {
 }
 
 export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'normal', editingNoteId, onEditingChange }: NoteCardProps) {
-  const [shouldBlink, setShouldBlink] = useState(false);
-  
   const { subject, setSubject, content,
     setContent, isDragging, setIsDragging,
     isResizing, setIsResizing, isEditing,
