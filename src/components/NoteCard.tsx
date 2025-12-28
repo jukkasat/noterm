@@ -20,7 +20,7 @@ interface NoteCardProps {
   onEditingChange: (id: string | null) => void;
 }
 
-export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'normal', editingNoteId, onEditingChange }: NoteCardProps) {
+export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 3, editingNoteId, onEditingChange }: NoteCardProps) {
   const { subject, setSubject, content,
     setContent, isDragging, setIsDragging,
     isResizing, setIsResizing, isEditing,
@@ -164,19 +164,31 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 'no
 
   const getTextSizeClasses = () => {
     switch (textSize) {
-      case 'small':
+      case 1:
+        return {
+          subject: 'text-[10px]',
+          message: 'text-[10px]',
+          date: 'text-[8px]',
+        };
+      case 2:
         return {
           subject: 'text-xs',
           message: 'text-xs',
           date: 'text-[10px]',
         };
-      case 'large':
+      case 4:
         return {
           subject: 'text-base',
           message: 'text-base',
           date: 'text-sm',
         };
-      default:
+      case 5:
+        return {
+          subject: 'text-lg',
+          message: 'text-lg',
+          date: 'text-base',
+        };
+      default: // case 3
         return {
           subject: 'text-sm',
           message: 'text-sm',

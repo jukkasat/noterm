@@ -18,7 +18,7 @@ describe('SettingsDialog', () => {
         onOpenChange={mockOnOpenChange}
         darkMode={false}
         onDarkModeChange={mockOnDarkModeChange}
-        textSize="normal"
+        textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
       />
     );
@@ -34,7 +34,7 @@ describe('SettingsDialog', () => {
         onOpenChange={mockOnOpenChange}
         darkMode={false}
         onDarkModeChange={mockOnDarkModeChange}
-        textSize="normal"
+        textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
       />
     );
@@ -49,7 +49,7 @@ describe('SettingsDialog', () => {
         onOpenChange={mockOnOpenChange}
         darkMode={false}
         onDarkModeChange={mockOnDarkModeChange}
-        textSize="normal"
+        textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
       />
     );
@@ -62,24 +62,30 @@ describe('SettingsDialog', () => {
     });
   });
 
-  it('should change text size when radio button is selected', async () => {
+  it('should change text size when plus button is clicked', async () => {
     render(
       <SettingsDialog
         open={true}
         onOpenChange={mockOnOpenChange}
         darkMode={false}
         onDarkModeChange={mockOnDarkModeChange}
-        textSize="normal"
+        textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
       />
     );
 
-    const largeRadio = screen.getByLabelText('Large');
-    fireEvent.click(largeRadio);
+    // Find all buttons and locate the Plus button
+    const buttons = screen.getAllByRole('button');
+    const plusButton = buttons.find(btn => btn.querySelector('.lucide-plus'));
+    
+    expect(plusButton).toBeDefined();
+    if (plusButton) {
+      fireEvent.click(plusButton);
 
-    await waitFor(() => {
-      expect(mockOnTextSizeChange).toHaveBeenCalledWith('large');
-    });
+      await waitFor(() => {
+        expect(mockOnTextSizeChange).toHaveBeenCalledWith(4);
+      });
+    }
   });
 
   it('should open about dialog when About button is clicked', async () => {
@@ -89,7 +95,7 @@ describe('SettingsDialog', () => {
         onOpenChange={mockOnOpenChange}
         darkMode={false}
         onDarkModeChange={mockOnDarkModeChange}
-        textSize="normal"
+        textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
       />
     );
@@ -109,7 +115,7 @@ describe('SettingsDialog', () => {
         onOpenChange={mockOnOpenChange}
         darkMode={true}
         onDarkModeChange={mockOnDarkModeChange}
-        textSize="normal"
+        textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
       />
     );
@@ -118,19 +124,19 @@ describe('SettingsDialog', () => {
     expect(dialog).toHaveStyle({ backgroundColor: '#3a3530' });
   });
 
-  it('should have correct text size selected', () => {
+  it('should display correct text size value', () => {
     render(
       <SettingsDialog
         open={true}
         onOpenChange={mockOnOpenChange}
         darkMode={false}
         onDarkModeChange={mockOnDarkModeChange}
-        textSize="small"
+        textSize={2}
         onTextSizeChange={mockOnTextSizeChange}
       />
     );
 
-    const smallRadio = screen.getByLabelText('Small') as HTMLInputElement;
-    expect(smallRadio).toBeChecked();
+    // Check that the number 2 is displayed
+    expect(screen.getByText('2')).toBeInTheDocument();
   });
 });

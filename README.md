@@ -92,7 +92,7 @@ When deploying new changes:
 
 3. **Run QA / test version**:
    ```bash
-  npm run preview
+   npm run preview
    ```
 
 4. **Deploy** the `dist` folder to your hosting service:
