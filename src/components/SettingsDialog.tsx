@@ -7,10 +7,11 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Button } from '@/components/ui/button';
+import { Minus, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { AboutDialog } from '@/components/AboutDialog';
 import type { TextSize } from '@/types/note';
-import { RadioGroup, RadioGroupItem } from '@radix-ui/react-radio-group';
 
 interface SettingsDialogProps {
   open: boolean;
@@ -56,26 +57,41 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange,
 
             <div className="flex items-center justify-between">
               <Label style={{ color: textColor }}>Text size</Label>
-              <RadioGroup value={textSize} onValueChange={(value) => onTextSizeChange(value as TextSize)} className="flex items-center gap-4">
-                <div className="flex items-center space-x-1">
-                  <RadioGroupItem value="small" id="small" />
-                  <Label htmlFor="small" className="cursor-pointer text-xs" style={{ color: textColor }}>
-                    Small
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <RadioGroupItem value="normal" id="normal" />
-                  <Label htmlFor="normal" className="cursor-pointer text-xs" style={{ color: textColor }}>
-                    Normal
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <RadioGroupItem value="large" id="large" />
-                  <Label htmlFor="large" className="cursor-pointer text-xs" style={{ color: textColor }}>
-                    Large
-                  </Label>
-                </div>
-              </RadioGroup>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => textSize > 1 && onTextSizeChange((textSize - 1) as TextSize)}
+                  disabled={textSize === 1}
+                  className="h-6 w-6 p-0"
+                  style={{ 
+                    borderColor: '#8b6f47', 
+                    color: textSize === 1 ? '#999' : textColor, 
+                    backgroundColor: darkMode ? '#2a2520' : '#fdfcfa' 
+                  }}
+                >
+                  <Minus className="h-3 w-3" />
+                </Button>
+                <span className="w-8 text-center font-semibold" style={{ color: textColor }}>
+                  {textSize}
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => textSize < 5 && onTextSizeChange((textSize + 1) as TextSize)}
+                  disabled={textSize === 5}
+                  className="h-6 w-6 p-0"
+                  style={{ 
+                    borderColor: '#8b6f47', 
+                    color: textSize === 5 ? '#999' : textColor, 
+                    backgroundColor: darkMode ? '#2a2520' : '#fdfcfa' 
+                  }}
+                >
+                  <Plus className="h-3 w-3" />
+                </Button>
+              </div>
             </div>
           </div>
             <div className="grid gap-4">

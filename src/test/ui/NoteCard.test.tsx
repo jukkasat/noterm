@@ -124,7 +124,7 @@ describe('NoteCard', () => {
         onDragStart={onDragStart}
         editingNoteId={null}
         onEditingChange={onEditingChange}
-        textSize="small"
+        textSize={2}
       />
     );
 
@@ -139,7 +139,7 @@ describe('NoteCard', () => {
         onDragStart={onDragStart}
         editingNoteId={null}
         onEditingChange={onEditingChange}
-        textSize="large"
+        textSize={4}
       />
     );
 

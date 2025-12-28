@@ -20,7 +20,7 @@ const MainComponent = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [textSize, setTextSize] = useState<TextSize>('normal');
+  const [textSize, setTextSize] = useState<TextSize>(3);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -42,9 +42,12 @@ const MainComponent = () => {
       setDarkMode(true);
     }
 
-    const savedTextSize = localStorage.getItem('noter-text-size') as TextSize;
-    if (savedTextSize && ['small', 'normal', 'large'].includes(savedTextSize)) {
-      setTextSize(savedTextSize);
+    const savedTextSize = localStorage.getItem('noter-text-size');
+    if (savedTextSize) {
+      const size = parseInt(savedTextSize, 10);
+      if (size >= 1 && size <= 5) {
+        setTextSize(size as TextSize);
+      }
     }
 
   }, []);
@@ -61,7 +64,7 @@ const MainComponent = () => {
 
   // Save text size preference to localStorage
   useEffect(() => {
-    localStorage.setItem('noter-text-size', textSize);
+    localStorage.setItem('noter-text-size', textSize.toString());
   }, [textSize]);
 
   const handleAddNote = (message: string, subject?: string) => {
