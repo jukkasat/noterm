@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import type { TextSize } from "@/types/note"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -7,6 +8,61 @@ export function cn(...inputs: ClassValue[]) {
 
 export function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
+}
+
+export function getTextSizeClasses(textSize: TextSize) {
+  switch (textSize) {
+    case 1:
+      return {
+        subject: 'text-[10px]',
+        message: 'text-[10px]',
+        date: 'text-[8px]',
+        title: 'text-base',
+        description: 'text-xs',
+        label: 'text-xs',
+        button: 'text-xs',
+      };
+    case 2:
+      return {
+        subject: 'text-xs',
+        message: 'text-xs',
+        date: 'text-[10px]',
+        title: 'text-lg',
+        description: 'text-sm',
+        label: 'text-sm',
+        button: 'text-sm',
+      };
+    case 4:
+      return {
+        subject: 'text-base',
+        message: 'text-base',
+        date: 'text-sm',
+        title: 'text-2xl',
+        description: 'text-base',
+        label: 'text-base',
+        button: 'text-base',
+      };
+    case 5:
+      return {
+        subject: 'text-lg',
+        message: 'text-lg',
+        date: 'text-base',
+        title: 'text-3xl',
+        description: 'text-lg',
+        label: 'text-lg',
+        button: 'text-lg',
+      };
+    default: // case 3
+      return {
+        subject: 'text-sm',
+        message: 'text-sm',
+        date: 'text-xs',
+        title: 'text-xl',
+        description: 'text-sm',
+        label: 'text-sm',
+        button: 'text-sm',
+      };
+  }
 }
 
 // Generate RFC4122 v4 UUID. Uses `crypto.randomUUID()` when available,
