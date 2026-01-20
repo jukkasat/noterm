@@ -210,7 +210,7 @@ export function NoteEditMode({
         ))}
       </div>
       
-      <div className="flex gap-1 mt-2">
+      <div className="flex flex-wrap gap-1 mt-2">
         <Button
           size="sm"
           variant="ghost"

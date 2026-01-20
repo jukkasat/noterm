@@ -180,7 +180,7 @@ const MainComponent = () => {
         <div
           className="absolute inset-0 pointer-events-none rounded-lg"
           style={{
-            border: '24px solid transparent',
+            border: isMobile ? '16px solid transparent' : '24px solid transparent',
             borderImage: 'linear-gradient(135deg, #8b6f47 0%, #6b5638 25%, #5a4a2f 50%, #6b5638 75%, #8b6f47 100%) 1',
             boxShadow: 'inset 0 0 30px rgba(0,0,0,0.3), 0 12px 48px rgba(0,0,0,0.5), 0 6px 24px rgba(0,0,0,0.4), 0 3px 12px rgba(0,0,0,0.3)',
           }}
