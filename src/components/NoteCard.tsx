@@ -8,6 +8,7 @@ import { useNoteCard } from '@/hooks/useNoteCard';
 import { useNoteDragResize } from '@/hooks/useNoteDragResize';
 import { NoteEditMode } from '@/components/notecard/NoteEditMode';
 import { NoteReadMode } from '@/components/notecard/NoteReadMode';
+import { getTextSizeClasses } from '@/lib/utils';
 import { NOTE_COLORS } from '@/components/noteColors';
 
 interface NoteCardProps {
@@ -32,6 +33,8 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 3, 
     handleAddCheckbox, handleAddText, handleAddImage,
     handleImageUpload, handleDragStart, cardRef
   } = useNoteCard({ note, onUpdate, onDragStart });
+
+  const sizeClasses = getTextSizeClasses(textSize);
 
   // Notify parent when edit state changes
   useEffect(() => {
@@ -161,43 +164,6 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 3, 
     style.minHeight = `${newHeight}px`;
     style.height = `${textarea.scrollHeight + 4}px`;
   };
-
-  const getTextSizeClasses = () => {
-    switch (textSize) {
-      case 1:
-        return {
-          subject: 'text-[10px]',
-          message: 'text-[10px]',
-          date: 'text-[8px]',
-        };
-      case 2:
-        return {
-          subject: 'text-xs',
-          message: 'text-xs',
-          date: 'text-[10px]',
-        };
-      case 4:
-        return {
-          subject: 'text-base',
-          message: 'text-base',
-          date: 'text-sm',
-        };
-      case 5:
-        return {
-          subject: 'text-lg',
-          message: 'text-lg',
-          date: 'text-base',
-        };
-      default: // case 3
-        return {
-          subject: 'text-sm',
-          message: 'text-sm',
-          date: 'text-xs',
-        };
-    }
-  };
-
-  const sizeClasses = getTextSizeClasses();
 
   return (
     <Card

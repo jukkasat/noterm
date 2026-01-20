@@ -11,7 +11,10 @@ import { Button } from '@/components/ui/button';
 import { Minus, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { AboutDialog } from '@/components/AboutDialog';
+import { ContactDialog } from '@/components/ContactDialog';
+import { SupportDialog } from '@/components/SupportDialog';
 import type { TextSize } from '@/types/note';
+import { getTextSizeClasses } from '@/lib/utils';
 
 interface SettingsDialogProps {
   open: boolean;
@@ -24,9 +27,12 @@ interface SettingsDialogProps {
 
 export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange, textSize, onTextSizeChange }: SettingsDialogProps) {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+  const [isSupportOpen, setIsSupportOpen] = useState(false);
+  const [isContactOpen, setIsContactOpen] = useState(false);
   const dialogBg = darkMode ? '#3a3530' : '#ffffff';
   const textColor = darkMode ? '#e0d5c5' : '#5a4a2f';
   const descColor = darkMode ? '#c0b5a5' : '#58544fff';
+  const sizeClasses = getTextSizeClasses(textSize);
 
   return (
     <>
@@ -36,15 +42,15 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange,
           style={{ backgroundColor: dialogBg, color: textColor, borderColor: '#8b6f47' }}
         >
           <DialogHeader>
-            <DialogTitle style={{ color: textColor}}>Settings</DialogTitle>
+            <DialogTitle className={sizeClasses.title} style={{ color: textColor}}>Settings</DialogTitle>
             <p className="pb-4">______</p>
-            <DialogDescription style={{ color: descColor }}>
+            <DialogDescription className={sizeClasses.description} style={{ color: descColor }}>
               Customize your noter m. experience.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="dark-mode" className="cursor-pointer" style={{ color: textColor }}>
+              <Label htmlFor="dark-mode" className={`cursor-pointer ${sizeClasses.label}`} style={{ color: textColor }}>
                 Theme
               </Label>
               <Switch
@@ -56,7 +62,7 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange,
             </div>
 
             <div className="flex items-center justify-between">
-              <Label style={{ color: textColor }}>Text size</Label>
+              <Label className={sizeClasses.label} style={{ color: textColor }}>Text size</Label>
               <div className="flex items-center gap-2">
                 <Button
                   type="button"
@@ -73,7 +79,7 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange,
                 >
                   <Minus className="h-3 w-3" />
                 </Button>
-                <span className="w-8 text-center font-semibold" style={{ color: textColor }}>
+                <span className={`w-8 text-center font-semibold ${sizeClasses.label}`} style={{ color: textColor }}>
                   {textSize}
                 </span>
                 <Button
@@ -95,21 +101,44 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange,
             </div>
           </div>
             <div className="grid gap-4">
-              <div className="flex justify-left">
-                <button
-                  type="button"
-                  onClick={() => setIsAboutOpen(true)}
-                  className="text-left"
-                  style={{ background: 'transparent', border: 'none', paddingTop: 24, color: textColor, fontWeight: 'bold', cursor: 'pointer' }}
-                >
-                  About
-                </button>
-              </div>
+              <p className="pb-4">______</p>
+              <button
+                type="button"
+                onClick={() => setIsAboutOpen(true)}
+                className={`text-left ${sizeClasses.button}`}
+                style={{ background: 'transparent', border: 'none', color: textColor, fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                About
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsContactOpen(true)}
+                className={`text-left ${sizeClasses.button}`}
+                style={{ background: 'transparent', border: 'none', color: textColor, fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                Contact
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsSupportOpen(true)}
+                className={`text-left ${sizeClasses.button}`}
+                style={{ background: 'transparent', border: 'none', color: textColor, fontWeight: 'bold', cursor: 'pointer' }}
+              >
+                Support
+              </button>
+              {/* </div> */}
+            <div className="pt-6 flex justify-center">
+              <Button onClick={() => onOpenChange(false)} style={{ backgroundColor: '#645033ff', color: '#ffffff' }}>
+                Close
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
 
       <AboutDialog open={isAboutOpen} onOpenChange={setIsAboutOpen} darkMode={darkMode} />
+      <ContactDialog open={isContactOpen} onOpenChange={setIsContactOpen} darkMode={darkMode} />
+      <SupportDialog open={isSupportOpen} onOpenChange={setIsSupportOpen} darkMode={darkMode} />
     </>
   );
 }
