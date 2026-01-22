@@ -21,3 +21,4 @@ export interface NotesState {
 }
 
 export type TextSize = 1 | 2 | 3 | 4 | 5;
+export type SwimlanesCount = 0 | 1 | 2 | 3 | 4 | 5;

@@ -65,6 +65,33 @@ export function getTextSizeClasses(textSize: TextSize) {
   }
 }
 
+export const THEME_COLORS = {
+  light: {
+    background: '#d4c4a8',
+    board: '#f5f0e8',
+    text: '#5a4a2f',
+    subtle: '#6b5638',
+  },
+  dark: {
+    background: '#2a2520',
+    board: '#3a3530',
+    text: '#e0d5c5',
+    subtle: '#c0b5a5',
+  },
+} as const;
+
+export function getThemeColors(darkMode: boolean) {
+  return darkMode ? THEME_COLORS.dark : THEME_COLORS.light;
+}
+
+export const DEFAULT_SWIMLANE_LABELS: Record<number, string[]> = {
+  1: ['In Progress', 'Ready'],
+  2: ['Backlog', 'In Progress', 'Ready'],
+  3: ['Backlog', 'To Do', 'In Progress', 'Ready'],
+  4: ['Backlog', 'To Do', 'In Progress', 'Review', 'Ready'],
+  5: ['Backlog', 'To Do', 'In Progress', 'Review', 'Testing', 'Ready'],
+};
+
 // Generate RFC4122 v4 UUID. Uses `crypto.randomUUID()` when available,
 // otherwise falls back to `crypto.getRandomValues` so it works on older/mobile browsers.
 export function generateId(): string {
