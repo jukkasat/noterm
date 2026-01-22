@@ -7,7 +7,7 @@ import { AddNoteDialog } from '@/components/AddNoteDialog';
 import { NOTE_COLORS } from '@/components/noteColors';
 import { SettingsDialog } from '@/components/SettingsDialog';
 import { SupportDialog } from '@/components/SupportDialog';
-import { generateId } from '@/lib/utils';
+import { generateId, getThemeColors } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
 import type { Note, TextSize } from '@/types/note';
 
@@ -181,10 +181,8 @@ const MainComponent = () => {
     }
   };
 
-  const backgroundColor = darkMode ? '#2a2520' : '#d4c4a8';
-  const boardColor = darkMode ? '#3a3530' : '#f5f0e8';
-  const textColor = darkMode ? '#e0d5c5' : '#5a4a2f';
-  const subtleTextColor = darkMode ? '#c0b5a5' : '#6b5638';
+  const colors = getThemeColors(darkMode);
+  const { background: backgroundColor, board: boardColor, text: textColor, subtle: subtleTextColor } = colors;
 
   return (
     <div className={`min-h-screen overflow-auto p-12 note-container ${isMobile ? 'mobile' : ''}`} style={{ backgroundColor }}>
@@ -232,6 +230,7 @@ const MainComponent = () => {
 
         {/* Note board area */}
         <div 
+          data-testid="note-board"
           className="relative" 
           style={{ minHeight: 'calc(100vh - 12rem)' }}
           onDoubleClick={(e) => {

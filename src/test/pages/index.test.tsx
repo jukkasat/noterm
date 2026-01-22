@@ -43,6 +43,46 @@ describe('Index page', () => {
     }
   });
 
+  it('should open add note dialog when double-clicking empty board', async () => {
+    render(<MainComponent />);
+    
+    const boardArea = screen.getByTestId('note-board');
+    
+    fireEvent.doubleClick(boardArea);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Add New Note')).toBeInTheDocument();
+    });
+  });
+
+  it('should open add note dialog when double-clicking board with existing notes', async () => {
+    const testNotes = [{
+      id: '1',
+      content: [{ type: 'text', id: '1', value: 'Existing note' }],
+      x: 100,
+      y: 100,
+      width: 250,
+      height: 200,
+      color: '#fef08a',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    }];
+    
+    localStorage.setItem('noter-notes', JSON.stringify(testNotes));
+    render(<MainComponent />);
+    
+    // Verify note exists
+    expect(screen.getByText('Existing note')).toBeInTheDocument();
+    
+    const boardArea = screen.getByTestId('note-board');
+    
+    fireEvent.doubleClick(boardArea);
+    
+    await waitFor(() => {
+      expect(screen.getByText('Add New Note')).toBeInTheDocument();
+    });
+  });
+
   it('should persist notes to localStorage', async () => {
     render(<MainComponent />);
     
