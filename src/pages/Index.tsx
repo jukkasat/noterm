@@ -139,7 +139,7 @@ const MainComponent = () => {
 
     toast({
       title: 'Notes saved!',
-      description: `Your Notes are saved to Downloads folder as: ${filename}`,
+      description: `Your Notes are saved as ${filename}`,
     });
   };
 
@@ -231,7 +231,15 @@ const MainComponent = () => {
         />
 
         {/* Note board area */}
-        <div className="relative" style={{ minHeight: 'calc(100vh - 12rem)' }}>
+        <div 
+          className="relative" 
+          style={{ minHeight: 'calc(100vh - 12rem)' }}
+          onDoubleClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsAddDialogOpen(true);
+            }
+          }}
+        >
           {notes.map((note) => (
             <NoteCard
               key={note.id}
@@ -246,10 +254,10 @@ const MainComponent = () => {
           ))}
 
           {notes.length === 0 && (
-            <div className="absolute inset-0 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="text-center" style={{ color: subtleTextColor }}>
                 <p className="text-xl mb-2">No notes yet!</p>
-                <p className="text-sm opacity-75">Click the + button to add your first note</p>
+                <p className="text-sm opacity-75">Add your first note by clicking the + button or double-clicking the board.</p>
               </div>
             </div>
           )}
