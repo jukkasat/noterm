@@ -7,17 +7,9 @@ import { AddNoteDialog } from '@/components/AddNoteDialog';
 import { NOTE_COLORS } from '@/components/noteColors';
 import { SettingsDialog } from '@/components/SettingsDialog';
 import { SupportDialog } from '@/components/SupportDialog';
-import { generateId, getThemeColors } from '@/lib/utils';
+import { generateId, getThemeColors, DEFAULT_SWIMLANE_LABELS } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
 import type { Note, TextSize, SwimlanesCount } from '@/types/note';
-
-const DEFAULT_SWIMLANE_LABELS: Record<number, string[]> = {
-  1: ['In Progress', 'Ready'],
-  2: ['Backlog', 'In Progress', 'Ready'],
-  3: ['Backlog', 'To Do', 'In Progress', 'Ready'],
-  4: ['Backlog', 'To Do', 'In Progress', 'Review', 'Ready'],
-  5: ['Backlog', 'To Do', 'In Progress', 'Review', 'Testing', 'Ready'],
-};
 
 const MainComponent = () => {
   useSeoMeta({
