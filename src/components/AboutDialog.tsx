@@ -21,7 +21,7 @@ export function AboutDialog({ open, onOpenChange, darkMode = false }: AboutDialo
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[800px]" /* ~2x size of Settings (425px) */
+        className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto !translate-y-0 sm:!translate-y-[-50%] !top-[30px] sm:!top-[50%]"
         style={{ backgroundColor: dialogBg, color: textColor, borderColor: '#8b6f47' }}
       >
         <DialogHeader>

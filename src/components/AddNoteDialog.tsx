@@ -51,7 +51,7 @@ export function AddNoteDialog({ open, onOpenChange, onAdd, darkMode = false }: A
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[425px]"
+        className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto !translate-y-0 sm:!translate-y-[-50%] !top-[30px] sm:!top-[50%]"
         style={{ backgroundColor: dialogBg, color: textColor, borderColor: '#8b6f47' }}
       >
         <DialogHeader>

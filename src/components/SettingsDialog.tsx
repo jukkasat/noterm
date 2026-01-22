@@ -38,8 +38,12 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange,
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent
-          className="sm:max-w-[425px]"
-          style={{ backgroundColor: dialogBg, color: textColor, borderColor: '#8b6f47' }}
+          className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto !translate-y-0 sm:!translate-y-[-50%] !top-[30px] sm:!top-[50%]"
+          style={{ 
+            backgroundColor: dialogBg, 
+            color: textColor, 
+            borderColor: '#8b6f47'
+          }}
         >
           <DialogHeader>
             <DialogTitle className={sizeClasses.title} style={{ color: textColor}}>Settings</DialogTitle>

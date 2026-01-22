@@ -6,6 +6,7 @@ import { NoteCard } from '@/components/NoteCard';
 import { AddNoteDialog } from '@/components/AddNoteDialog';
 import { NOTE_COLORS } from '@/components/noteColors';
 import { SettingsDialog } from '@/components/SettingsDialog';
+import { SupportDialog } from '@/components/SupportDialog';
 import { generateId } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
 import type { Note, TextSize } from '@/types/note';
@@ -19,6 +20,7 @@ const MainComponent = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
+  const [isSupportDialogOpen, setIsSupportDialogOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [textSize, setTextSize] = useState<TextSize>(3);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
@@ -126,7 +128,7 @@ const MainComponent = () => {
 
     toast({
       title: 'Notes saved!',
-      description: `Your Notes are saved as: ${filename}`,
+      description: `Your Notes are saved to Downloads folder as: ${filename}`,
     });
   };
 
@@ -266,6 +268,17 @@ const MainComponent = () => {
           </Button>
         </div>
 
+        {/* Support Development link at bottom center */}
+        <div className="flex justify-center pb-10">
+          <button
+            onClick={() => setIsSupportDialogOpen(true)}
+            className="text-sm hover:underline transition-all"
+            style={{ color: subtleTextColor }}
+          >
+            ☕ Support noter m.
+          </button>
+        </div>
+
         {/* Add note button */}
         <Button
           onClick={() => setIsAddDialogOpen(true)}
@@ -289,6 +302,11 @@ const MainComponent = () => {
           onDarkModeChange={setDarkMode}
           textSize={textSize}
           onTextSizeChange={setTextSize}
+        />
+        <SupportDialog
+          open={isSupportDialogOpen}
+          onOpenChange={setIsSupportDialogOpen}
+          darkMode={darkMode}
         />
       </div>
     </div>

@@ -23,7 +23,7 @@ export function SupportDialog({ open, onOpenChange, darkMode = false }: SupportD
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[600px]" /* ~2x size of Settings (425px) */
+        className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto !translate-y-0 sm:!translate-y-[-50%] !top-[30px] sm:!top-[50%]"
         style={{ backgroundColor: dialogBg, color: textColor, borderColor: '#8b6f47' }}
       >
         <DialogHeader>
@@ -34,18 +34,19 @@ export function SupportDialog({ open, onOpenChange, darkMode = false }: SupportD
           </DialogTitle>
           <p className="pb-6 text-center">_______</p>
           <DialogDescription className="text-center" style={{ color: descColor }}>
-            SUPPORT NOTER M. DEVELOPMENT 
+            SUPPORT NOTER M. DEVELOPMENT AND MAINTENANCE
           </DialogDescription>
           {/* <p className="pt-2 text-center">_______</p> */}
         </DialogHeader>
 
         <div className="py-4 pl-1 text-center" >
-          <p className="text-sm mb-4" style={{ color: textColor }}>
-            Support <b>noter m.</b> development and maintenance via Lightning or eCash <a href="lightning:21s@minibits.cash" className='underline'>21s@minibits.cash</a>
-          </p>
+          <div className="text-sm mb-4" style={{ color: textColor }}>
+            <p className="mb-1">Lightning / eCash:</p>
+            <a href="lightning:21s@minibits.cash" className='underline'>21s@minibits.cash</a>
+          </div>
           <p className="pb-6 text-center">_______</p>
           <p className="text-sm mb-2" style={{ color: textColor }}>
-            Support <b>noter m.</b> development via Bolt12:
+            Bolt12:
           </p>
 
           <div className="flex justify-center mb-4">
@@ -62,8 +63,8 @@ export function SupportDialog({ open, onOpenChange, darkMode = false }: SupportD
             </a>
           </div>
 
-          <p className="text-sm mb-4" style={{ color: textColor }}>
-            <b>Happy noting!</b>
+          <p className="text-sm mb-2" style={{ color: textColor }}>
+            <b>Thank you and happy noting!</b>
           </p>
           <p></p>
           <p></p>
