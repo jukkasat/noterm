@@ -235,4 +235,197 @@ describe('Index page', () => {
       });
     }
   });
+
+  describe('Swimlanes', () => {
+    it('should not render swimlanes when swimlanesCount is 0', () => {
+      localStorage.setItem('noter-swimlanes-count', '0');
+      render(<MainComponent />);
+      
+      // Should show header normally at top
+      const headers = screen.getAllByText('noterm.');
+      expect(headers).toHaveLength(1); // Only one header, not in bottom-left
+    });
+
+    it('should render swimlanes when swimlanesCount is set', () => {
+      localStorage.setItem('noter-swimlanes-count', '2');
+      render(<MainComponent />);
+      
+      // Should show default labels for 2 swimlanes
+      expect(screen.getByText('Backlog')).toBeInTheDocument();
+      expect(screen.getByText('In Progress')).toBeInTheDocument();
+      expect(screen.getByText('Ready')).toBeInTheDocument();
+    });
+
+    it('should render correct number of swimlanes based on count', () => {
+      localStorage.setItem('noter-swimlanes-count', '4');
+      render(<MainComponent />);
+      
+      // Default labels for 4 swimlanes
+      expect(screen.getByText('Backlog')).toBeInTheDocument();
+      expect(screen.getByText('To Do')).toBeInTheDocument();
+      expect(screen.getByText('In Progress')).toBeInTheDocument();
+      expect(screen.getByText('Review')).toBeInTheDocument();
+      expect(screen.getByText('Ready')).toBeInTheDocument();
+    });
+
+    it('should show logo at bottom-left when swimlanes are enabled', () => {
+      localStorage.setItem('noter-swimlanes-count', '2');
+      render(<MainComponent />);
+      
+      // Should have two "noterm." - one in bottom-left and one from header
+      const headers = screen.getAllByText('noterm.');
+      expect(headers.length).toBeGreaterThan(0);
+    });
+
+    it('should load custom swimlane labels from localStorage', () => {
+      localStorage.setItem('noter-swimlanes-count', '2');
+      localStorage.setItem('noter-swimlane-labels', JSON.stringify({
+        2: ['Custom Label 1', 'Custom Label 2', 'Custom Label 3']
+      }));
+      
+      render(<MainComponent />);
+      
+      expect(screen.getByText('Custom Label 1')).toBeInTheDocument();
+      expect(screen.getByText('Custom Label 2')).toBeInTheDocument();
+      expect(screen.getByText('Custom Label 3')).toBeInTheDocument();
+    });
+
+    it('should enable editing swimlane label on double-click', async () => {
+      localStorage.setItem('noter-swimlanes-count', '2');
+      render(<MainComponent />);
+      
+      const backlogLabel = screen.getByText('Backlog');
+      fireEvent.doubleClick(backlogLabel);
+      
+      await waitFor(() => {
+        const input = screen.getByDisplayValue('Backlog');
+        expect(input).toBeInTheDocument();
+        expect(input.tagName).toBe('INPUT');
+      });
+    });
+
+    it('should save edited swimlane label on blur', async () => {
+      localStorage.setItem('noter-swimlanes-count', '2');
+      render(<MainComponent />);
+      
+      const backlogLabel = screen.getByText('Backlog');
+      fireEvent.doubleClick(backlogLabel);
+      
+      await waitFor(() => {
+        const input = screen.getByDisplayValue('Backlog');
+        fireEvent.change(input, { target: { value: 'New Backlog' } });
+        fireEvent.blur(input);
+      });
+      
+      await waitFor(() => {
+        expect(screen.getByText('New Backlog')).toBeInTheDocument();
+        
+        const savedLabels = localStorage.getItem('noter-swimlane-labels');
+        expect(savedLabels).toBeTruthy();
+        
+        if (savedLabels) {
+          const labels = JSON.parse(savedLabels);
+          expect(labels[2][0]).toBe('New Backlog');
+        }
+      });
+    });
+
+    it('should save edited swimlane label on Enter key', async () => {
+      localStorage.setItem('noter-swimlanes-count', '2');
+      render(<MainComponent />);
+      
+      const backlogLabel = screen.getByText('Backlog');
+      fireEvent.doubleClick(backlogLabel);
+      
+      await waitFor(() => {
+        const input = screen.getByDisplayValue('Backlog');
+        fireEvent.change(input, { target: { value: 'Updated Backlog' } });
+        fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+      });
+      
+      await waitFor(() => {
+        expect(screen.getByText('Updated Backlog')).toBeInTheDocument();
+      });
+    });
+
+    it('should cancel editing swimlane label on Escape key', async () => {
+      localStorage.setItem('noter-swimlanes-count', '2');
+      render(<MainComponent />);
+      
+      const backlogLabel = screen.getByText('Backlog');
+      fireEvent.doubleClick(backlogLabel);
+      
+      await waitFor(() => {
+        const input = screen.getByDisplayValue('Backlog');
+        fireEvent.change(input, { target: { value: 'Changed Label' } });
+        fireEvent.keyDown(input, { key: 'Escape', code: 'Escape' });
+      });
+      
+      await waitFor(() => {
+        // Should still show original label
+        expect(screen.getByText('Backlog')).toBeInTheDocument();
+        expect(screen.queryByText('Changed Label')).not.toBeInTheDocument();
+      });
+    });
+
+    it('should persist swimlanes count to localStorage', async () => {
+      render(<MainComponent />);
+      
+      // Initially should be 0 (saved by component)
+      let savedCount = localStorage.getItem('noter-swimlanes-count');
+      expect(savedCount).toBe('0');
+      
+      // Note: In a real scenario, this would be set through the settings dialog
+      // but for this test we'll set it directly and re-render
+      localStorage.setItem('noter-swimlanes-count', '3');
+      
+      render(<MainComponent />);
+      
+      await waitFor(() => {
+        savedCount = localStorage.getItem('noter-swimlanes-count');
+        expect(savedCount).toBe('3');
+      });
+    });
+
+    it('should use default labels when no custom labels exist', () => {
+      localStorage.setItem('noter-swimlanes-count', '1');
+      render(<MainComponent />);
+      
+      // Default labels for 1 swimlane
+      expect(screen.getByText('In Progress')).toBeInTheDocument();
+      expect(screen.getByText('Ready')).toBeInTheDocument();
+    });
+
+    it('should handle maximum swimlanes count', () => {
+      localStorage.setItem('noter-swimlanes-count', '5');
+      render(<MainComponent />);
+      
+      // Default labels for 5 swimlanes (6 lanes total)
+      expect(screen.getByText('Backlog')).toBeInTheDocument();
+      expect(screen.getByText('To Do')).toBeInTheDocument();
+      expect(screen.getByText('In Progress')).toBeInTheDocument();
+      expect(screen.getByText('Review')).toBeInTheDocument();
+      expect(screen.getByText('Testing')).toBeInTheDocument();
+      expect(screen.getByText('Ready')).toBeInTheDocument();
+    });
+
+    it('should not render empty swimlane labels', async () => {
+      localStorage.setItem('noter-swimlanes-count', '2');
+      render(<MainComponent />);
+      
+      const backlogLabel = screen.getByText('Backlog');
+      fireEvent.doubleClick(backlogLabel);
+      
+      await waitFor(() => {
+        const input = screen.getByDisplayValue('Backlog');
+        fireEvent.change(input, { target: { value: '' } });
+        fireEvent.blur(input);
+      });
+      
+      // Should still show "Backlog" since empty strings are ignored
+      await waitFor(() => {
+        expect(screen.getByText('Backlog')).toBeInTheDocument();
+      });
+    });
+  });
 });

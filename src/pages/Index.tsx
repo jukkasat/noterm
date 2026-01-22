@@ -9,7 +9,15 @@ import { SettingsDialog } from '@/components/SettingsDialog';
 import { SupportDialog } from '@/components/SupportDialog';
 import { generateId, getThemeColors } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
-import type { Note, TextSize } from '@/types/note';
+import type { Note, TextSize, SwimlanesCount } from '@/types/note';
+
+const DEFAULT_SWIMLANE_LABELS: Record<number, string[]> = {
+  1: ['In Progress', 'Ready'],
+  2: ['Backlog', 'In Progress', 'Ready'],
+  3: ['Backlog', 'To Do', 'In Progress', 'Ready'],
+  4: ['Backlog', 'To Do', 'In Progress', 'Review', 'Ready'],
+  5: ['Backlog', 'To Do', 'In Progress', 'Review', 'Testing', 'Ready'],
+};
 
 const MainComponent = () => {
   useSeoMeta({
@@ -23,11 +31,15 @@ const MainComponent = () => {
   const [isSupportDialogOpen, setIsSupportDialogOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [textSize, setTextSize] = useState<TextSize>(3);
+  const [swimlanesCount, setSwimlanesCount] = useState<SwimlanesCount>(0);
+  const [swimlaneLabels, setSwimlaneLabels] = useState<Record<number, string[]>>({});
+  const [editingLaneIndex, setEditingLaneIndex] = useState<number | null>(null);
+  const [editingLaneValue, setEditingLaneValue] = useState('');
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const laneInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  // const isMobile = window.innerWidth <= 768;
 
   // Load notes and settings from localStorage on mount
   useEffect(() => {
@@ -50,6 +62,23 @@ const MainComponent = () => {
       const size = parseInt(savedTextSize, 10);
       if (size >= 1 && size <= 5) {
         setTextSize(size as TextSize);
+      }
+    }
+
+    const savedSwimlanesCount = localStorage.getItem('noter-swimlanes-count');
+    if (savedSwimlanesCount) {
+      const count = parseInt(savedSwimlanesCount, 10);
+      if (count >= 0 && count <= 5) {
+        setSwimlanesCount(count as SwimlanesCount);
+      }
+    }
+
+    const savedSwimlaneLabels = localStorage.getItem('noter-swimlane-labels');
+    if (savedSwimlaneLabels) {
+      try {
+        setSwimlaneLabels(JSON.parse(savedSwimlaneLabels));
+      } catch (err) {
+        console.error('Failed to load swimlane labels:', err);
       }
     }
 
@@ -79,6 +108,64 @@ const MainComponent = () => {
   useEffect(() => {
     localStorage.setItem('noter-text-size', textSize.toString());
   }, [textSize]);
+
+  // Save swimlanes count preference to localStorage
+  useEffect(() => {
+    localStorage.setItem('noter-swimlanes-count', swimlanesCount.toString());
+  }, [swimlanesCount]);
+
+  // Save swimlane labels to localStorage
+  useEffect(() => {
+    localStorage.setItem('noter-swimlane-labels', JSON.stringify(swimlaneLabels));
+  }, [swimlaneLabels]);
+
+  // Focus input when editing starts
+  useEffect(() => {
+    if (editingLaneIndex !== null && laneInputRef.current) {
+      laneInputRef.current.focus();
+      laneInputRef.current.select();
+    }
+  }, [editingLaneIndex]);
+
+  // Get current labels for swimlane count
+  const getCurrentLabels = (count: SwimlanesCount): string[] => {
+    if (count === 0) return [];
+    return swimlaneLabels[count] || DEFAULT_SWIMLANE_LABELS[count] || [];
+  };
+
+  const handleLaneDoubleClick = (index: number) => {
+    const currentLabels = getCurrentLabels(swimlanesCount);
+    setEditingLaneIndex(index);
+    setEditingLaneValue(currentLabels[index] || '');
+  };
+
+  const handleLaneLabelSave = () => {
+    if (editingLaneIndex !== null && editingLaneValue.trim()) {
+      const currentLabels = getCurrentLabels(swimlanesCount);
+      const newLabels = [...currentLabels];
+      newLabels[editingLaneIndex] = editingLaneValue.trim();
+      
+      setSwimlaneLabels({
+        ...swimlaneLabels,
+        [swimlanesCount]: newLabels,
+      });
+    }
+    setEditingLaneIndex(null);
+    setEditingLaneValue('');
+  };
+
+  const handleLaneLabelCancel = () => {
+    setEditingLaneIndex(null);
+    setEditingLaneValue('');
+  };
+
+  const handleLaneInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleLaneLabelSave();
+    } else if (e.key === 'Escape') {
+      handleLaneLabelCancel();
+    }
+  };
 
   const handleAddNote = (message: string, subject?: string) => {
     const now = Date.now();
@@ -207,17 +294,45 @@ const MainComponent = () => {
           />
         </div>
 
-        {/* Header */}
-        <div className="relative z-0 flex items-center justify-between p-8">
-          <div className="py-2 pl-4">
+        {/* Header - Only show at top when swimlanes are disabled */}
+        {swimlanesCount === 0 && (
+          <div className="relative z-0 flex items-center justify-between p-8">
+            <div className="py-2 pl-4">
+              <h1 className="text-6xl pl-1" style={{ color: textColor, fontFamily: 'Sacramento, cursive' }}>
+                noterm.
+              </h1>
+              <p className="text-sm" style={{ color: subtleTextColor}}>
+                Your Digital Note Board
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Spacer when swimlanes are enabled to maintain layout */}
+        {swimlanesCount > 0 && (
+          <div className="relative z-0 p-8">
+            <div className="py-2 pl-4" style={{ visibility: 'hidden' }}>
+              <h1 className="text-6xl pl-1">
+                noterm.
+              </h1>
+              <p className="text-sm">
+                Your Digital Note Board
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Logo at bottom left when swimlanes are enabled */}
+        {swimlanesCount > 0 && (
+          <div className="absolute bottom-8 left-12 z-0 pointer-events-none pb-4">
             <h1 className="text-6xl pl-1" style={{ color: textColor, fontFamily: 'Sacramento, cursive' }}>
               noterm.
             </h1>
-            <p className="text-sm" style={{ color: subtleTextColor}}>
+            <p className="text-sm" style={{ color: subtleTextColor }}>
               Your Digital Note Board
             </p>
           </div>
-        </div>
+        )}
 
         {/* Hidden file input */}
         <input
@@ -239,6 +354,65 @@ const MainComponent = () => {
             }
           }}
         >
+          {/* Swimlanes */}
+          {swimlanesCount > 0 && (
+            <>
+              {getCurrentLabels(swimlanesCount).map((label, index) => {
+                const totalLanes = getCurrentLabels(swimlanesCount).length;
+                const laneWidth = 100 / totalLanes;
+                const leftPosition = (index * laneWidth);
+                
+                return (
+                  <div
+                    key={`swimlane-${index}`}
+                    className="absolute pointer-events-none"
+                    style={{
+                      left: `${leftPosition}%`,
+                      top: '-120px',
+                      bottom: '0',
+                      borderLeft: index === 0 ? 'none' : `2px dashed ${darkMode ? '#6b5638' : '#8b6f47'}`,
+                      width: `${laneWidth}%`,
+                    }}
+                  >
+                    <div 
+                      className="sticky top-4 px-4 py-2 text-center"
+                      style={{ 
+                        color: subtleTextColor,
+                        fontSize: '0.875rem',
+                        opacity: 0.7,
+                      }}
+                    >
+                      {editingLaneIndex === index ? (
+                        <input
+                          ref={laneInputRef}
+                          type="text"
+                          value={editingLaneValue}
+                          onChange={(e) => setEditingLaneValue(e.target.value)}
+                          onBlur={handleLaneLabelSave}
+                          onKeyDown={handleLaneInputKeyDown}
+                          className="pointer-events-auto bg-transparent border-b border-gray-400 outline-none text-center font-semibold w-full"
+                          style={{ 
+                            color: textColor,
+                            fontSize: '0.875rem',
+                          }}
+                          maxLength={20}
+                        />
+                      ) : (
+                        <span
+                          className="pointer-events-auto cursor-pointer font-semibold hover:opacity-100 transition-opacity"
+                          onDoubleClick={() => handleLaneDoubleClick(index)}
+                          title="Double-click to rename"
+                        >
+                          {label}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </>
+          )}
+
           {notes.map((note) => (
             <NoteCard
               key={note.id}
@@ -323,6 +497,8 @@ const MainComponent = () => {
           onDarkModeChange={setDarkMode}
           textSize={textSize}
           onTextSizeChange={setTextSize}
+          swimlanesCount={swimlanesCount}
+          onSwimlanesCountChange={setSwimlanesCount}
         />
         <SupportDialog
           open={isSupportDialogOpen}

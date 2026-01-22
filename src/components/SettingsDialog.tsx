@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { AboutDialog } from '@/components/AboutDialog';
 import { ContactDialog } from '@/components/ContactDialog';
 import { SupportDialog } from '@/components/SupportDialog';
-import type { TextSize } from '@/types/note';
+import type { TextSize, SwimlanesCount } from '@/types/note';
 import { getTextSizeClasses } from '@/lib/utils';
 
 interface SettingsDialogProps {
@@ -23,9 +23,11 @@ interface SettingsDialogProps {
   onDarkModeChange: (enabled: boolean) => void;
   textSize: TextSize;
   onTextSizeChange: (size: TextSize) => void;
+  swimlanesCount: SwimlanesCount;
+  onSwimlanesCountChange: (count: SwimlanesCount) => void;
 }
 
-export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange, textSize, onTextSizeChange }: SettingsDialogProps) {
+export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange, textSize, onTextSizeChange, swimlanesCount, onSwimlanesCountChange }: SettingsDialogProps) {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isSupportOpen, setIsSupportOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -96,6 +98,45 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange,
                   style={{ 
                     borderColor: '#8b6f47', 
                     color: textSize === 5 ? '#999' : textColor, 
+                    backgroundColor: darkMode ? '#2a2520' : '#fdfcfa' 
+                  }}
+                >
+                  <Plus className="h-3 w-3" />
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <Label className={sizeClasses.label} style={{ color: textColor }}>Swimlanes / Kanban</Label>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => swimlanesCount > 0 && onSwimlanesCountChange((swimlanesCount - 1) as SwimlanesCount)}
+                  disabled={swimlanesCount === 0}
+                  className="h-6 w-6 p-0"
+                  style={{ 
+                    borderColor: '#8b6f47', 
+                    color: swimlanesCount === 0 ? '#999' : textColor, 
+                    backgroundColor: darkMode ? '#2a2520' : '#fdfcfa' 
+                  }}
+                >
+                  <Minus className="h-3 w-3" />
+                </Button>
+                <span className={`w-8 text-center font-semibold ${sizeClasses.label}`} style={{ color: textColor }}>
+                  {swimlanesCount}
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => swimlanesCount < 5 && onSwimlanesCountChange((swimlanesCount + 1) as SwimlanesCount)}
+                  disabled={swimlanesCount === 5}
+                  className="h-6 w-6 p-0"
+                  style={{ 
+                    borderColor: '#8b6f47', 
+                    color: swimlanesCount === 5 ? '#999' : textColor, 
                     backgroundColor: darkMode ? '#2a2520' : '#fdfcfa' 
                   }}
                 >

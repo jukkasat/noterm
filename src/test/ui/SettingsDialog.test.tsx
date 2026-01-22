@@ -6,6 +6,7 @@ describe('SettingsDialog', () => {
   const mockOnOpenChange = vi.fn();
   const mockOnDarkModeChange = vi.fn();
   const mockOnTextSizeChange = vi.fn();
+  const mockOnSwimlanesCountChange = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -20,6 +21,8 @@ describe('SettingsDialog', () => {
         onDarkModeChange={mockOnDarkModeChange}
         textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
+        swimlanesCount={0}
+        onSwimlanesCountChange={mockOnSwimlanesCountChange}
       />
     );
 
@@ -36,6 +39,8 @@ describe('SettingsDialog', () => {
         onDarkModeChange={mockOnDarkModeChange}
         textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
+        swimlanesCount={0}
+        onSwimlanesCountChange={mockOnSwimlanesCountChange}
       />
     );
 
@@ -51,6 +56,8 @@ describe('SettingsDialog', () => {
         onDarkModeChange={mockOnDarkModeChange}
         textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
+        swimlanesCount={0}
+        onSwimlanesCountChange={mockOnSwimlanesCountChange}
       />
     );
 
@@ -71,6 +78,8 @@ describe('SettingsDialog', () => {
         onDarkModeChange={mockOnDarkModeChange}
         textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
+        swimlanesCount={0}
+        onSwimlanesCountChange={mockOnSwimlanesCountChange}
       />
     );
 
@@ -97,6 +106,8 @@ describe('SettingsDialog', () => {
         onDarkModeChange={mockOnDarkModeChange}
         textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
+        swimlanesCount={0}
+        onSwimlanesCountChange={mockOnSwimlanesCountChange}
       />
     );
 
@@ -117,6 +128,8 @@ describe('SettingsDialog', () => {
         onDarkModeChange={mockOnDarkModeChange}
         textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
+        swimlanesCount={0}
+        onSwimlanesCountChange={mockOnSwimlanesCountChange}
       />
     );
 
@@ -133,6 +146,8 @@ describe('SettingsDialog', () => {
         onDarkModeChange={mockOnDarkModeChange}
         textSize={2}
         onTextSizeChange={mockOnTextSizeChange}
+        swimlanesCount={0}
+        onSwimlanesCountChange={mockOnSwimlanesCountChange}
       />
     );
 
