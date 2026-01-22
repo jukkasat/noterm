@@ -34,7 +34,7 @@ export function ContactDialog({ open, onOpenChange, darkMode = false }: ContactD
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[600px]" /* ~2x size of Settings (425px) */
+        className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto !translate-y-0 sm:!translate-y-[-50%] !top-[30px] sm:!top-[50%]"
         style={{ backgroundColor: dialogBg, color: textColor, borderColor: '#8b6f47' }}
       >
         <DialogHeader>
@@ -43,18 +43,18 @@ export function ContactDialog({ open, onOpenChange, darkMode = false }: ContactD
               noterm.
             </p>
           </DialogTitle>
-          <p className="pb-6 text-center">_______</p>
+          <p className="pb-3 text-center">_______</p>
           <DialogDescription className="text-center" style={{ color: descColor }}>
             HELP / SUPPORT / IDEAS
           </DialogDescription>
         </DialogHeader>
 
-        <div className="py-4 pl-1 text-center" >
+        <div className="py-2 pl-1 text-center" >
           <p className="text-sm mb-6" style={{ color: textColor }}>
             If in need for help or support about using <b>noter m.</b> or if you have new ideas how to make it even better, you can reach us by following form:
           </p>
           
-          <form onSubmit={handleSubmit} className="space-y-4 mb-6 pl-4 pr-4">
+          <form onSubmit={handleSubmit} className="space-y-4 mb-6 pl-2 pr-2">
             <div className="text-left">
               <Label htmlFor="category" style={{ color: textColor }} className="mb-2 ml-1 block">
                 Category

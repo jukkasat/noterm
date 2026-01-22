@@ -6,6 +6,7 @@ import { NoteCard } from '@/components/NoteCard';
 import { AddNoteDialog } from '@/components/AddNoteDialog';
 import { NOTE_COLORS } from '@/components/noteColors';
 import { SettingsDialog } from '@/components/SettingsDialog';
+import { SupportDialog } from '@/components/SupportDialog';
 import { generateId } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
 import type { Note, TextSize } from '@/types/note';
@@ -19,12 +20,14 @@ const MainComponent = () => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
+  const [isSupportDialogOpen, setIsSupportDialogOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [textSize, setTextSize] = useState<TextSize>(3);
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  const isMobile = window.innerWidth <= 768;
+  // const isMobile = window.innerWidth <= 768;
 
   // Load notes and settings from localStorage on mount
   useEffect(() => {
@@ -50,6 +53,16 @@ const MainComponent = () => {
       }
     }
 
+  }, []);
+
+  // Handle window resize for mobile detection
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // Save notes to localStorage whenever they change
@@ -126,7 +139,7 @@ const MainComponent = () => {
 
     toast({
       title: 'Notes saved!',
-      description: `Your Notes are saved as: ${filename}`,
+      description: `Your Notes are saved as ${filename}`,
     });
   };
 
@@ -178,9 +191,12 @@ const MainComponent = () => {
       <div className={`relative min-h-[calc(100vh-6rem)] ${isMobile ? 'min-w-[1000px]' : 'min-w-[1400px]'} rounded-lg`} style={{ backgroundColor: boardColor }}>
         {/* Wooden border frame */}
         <div
+          key={`border-${isMobile}`}
           className="absolute inset-0 pointer-events-none rounded-lg"
           style={{
-            border: isMobile ? '16px solid transparent' : '24px solid transparent',
+            borderWidth: isMobile ? '16px' : '24px',
+            borderStyle: 'solid',
+            borderColor: 'transparent',
             borderImage: 'linear-gradient(135deg, #8b6f47 0%, #6b5638 25%, #5a4a2f 50%, #6b5638 75%, #8b6f47 100%) 1',
             boxShadow: 'inset 0 0 30px rgba(0,0,0,0.3), 0 12px 48px rgba(0,0,0,0.5), 0 6px 24px rgba(0,0,0,0.4), 0 3px 12px rgba(0,0,0,0.3)',
           }}
@@ -215,7 +231,15 @@ const MainComponent = () => {
         />
 
         {/* Note board area */}
-        <div className="relative" style={{ minHeight: 'calc(100vh - 12rem)' }}>
+        <div 
+          className="relative" 
+          style={{ minHeight: 'calc(100vh - 12rem)' }}
+          onDoubleClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setIsAddDialogOpen(true);
+            }
+          }}
+        >
           {notes.map((note) => (
             <NoteCard
               key={note.id}
@@ -230,10 +254,10 @@ const MainComponent = () => {
           ))}
 
           {notes.length === 0 && (
-            <div className="absolute inset-0 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="text-center" style={{ color: subtleTextColor }}>
                 <p className="text-xl mb-2">No notes yet!</p>
-                <p className="text-sm opacity-75">Click the + button to add your first note</p>
+                <p className="text-sm opacity-75">Add your first note by clicking the + button or double-clicking the board.</p>
               </div>
             </div>
           )}
@@ -266,6 +290,17 @@ const MainComponent = () => {
           </Button>
         </div>
 
+        {/* Support Development link at bottom center */}
+        <div className="flex justify-center pb-10">
+          <button
+            onClick={() => setIsSupportDialogOpen(true)}
+            className="text-sm hover:underline transition-all"
+            style={{ color: subtleTextColor }}
+          >
+            ☕ Support noter m.
+          </button>
+        </div>
+
         {/* Add note button */}
         <Button
           onClick={() => setIsAddDialogOpen(true)}
@@ -289,6 +324,11 @@ const MainComponent = () => {
           onDarkModeChange={setDarkMode}
           textSize={textSize}
           onTextSizeChange={setTextSize}
+        />
+        <SupportDialog
+          open={isSupportDialogOpen}
+          onOpenChange={setIsSupportDialogOpen}
+          darkMode={darkMode}
         />
       </div>
     </div>
