@@ -1,14 +1,13 @@
 import { useEffect } from 'react';
-import type { Note, TextSize } from '@/types/note';
+import type { Note, TextSize, FontStyle } from '@/types/note';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@radix-ui/react-dialog';
-import { DialogFooter } from './ui/dialog';
 import { GripHorizontal } from 'lucide-react';
 import { useNoteCard } from '@/hooks/useNoteCard';
 import { useNoteDragResize } from '@/hooks/useNoteDragResize';
 import { NoteEditMode } from '@/components/notecard/NoteEditMode';
 import { NoteReadMode } from '@/components/notecard/NoteReadMode';
-import { getTextSizeClasses } from '@/lib/utils';
+import { getTextSizeClasses, getFontClass } from '@/lib/utils';
 import { NOTE_COLORS } from '@/components/noteColors';
 
 interface NoteCardProps {
@@ -17,11 +16,12 @@ interface NoteCardProps {
   onDelete: (id: string) => void;
   onDragStart: (id: string) => void;
   textSize?: TextSize;
+  fontStyle?: FontStyle;
   editingNoteId: string | null;
   onEditingChange: (id: string | null) => void;
 }
 
-export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 3, editingNoteId, onEditingChange }: NoteCardProps) {
+export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 3, fontStyle = 'handwriting', editingNoteId, onEditingChange }: NoteCardProps) {
   const { subject, setSubject, content,
     setContent, isDragging, setIsDragging,
     isResizing, setIsResizing, isEditing,
@@ -35,6 +35,7 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 3, 
   } = useNoteCard({ note, onUpdate, onDragStart });
 
   const sizeClasses = getTextSizeClasses(textSize);
+  const fontClass = getFontClass(fontStyle);
 
   // Notify parent when edit state changes
   useEffect(() => {
@@ -190,6 +191,7 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 3, 
             subject={subject}
             content={content}
             sizeClasses={sizeClasses}
+            fontClass={fontClass}
             onSubjectChange={setSubject}
             onContentChange={handleContentChange}
             onRemoveContent={handleRemoveContent}
@@ -211,6 +213,7 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 3, 
             note={note}
             content={content}
             sizeClasses={sizeClasses}
+            fontClass={fontClass}
             onEdit={() => {
               // Only allow editing if no other note is being edited
               if (!editingNoteId || editingNoteId === note.id) {
@@ -250,11 +253,13 @@ export function NoteCard({ note, onUpdate, onDelete, onDragStart, textSize = 3, 
             <DialogContent className="text-xs whitespace-pre-wrap break-words font-handwriting">
               <DialogTitle></DialogTitle>
               <DialogDescription></DialogDescription>
-              <DialogFooter className="pt-3 pr-0.5">
-                <p className="pr-5 text-red-600">Delete Note?</p>
-                <button onClick={handleClose}>No</button>
-                <button className="pl-1" onClick={handleConfirmDelete}>Yes</button>
-              </DialogFooter>
+              <div className="pt-3 pr-0.5 flex flex-wrap items-center justify-end gap-x-5 gap-y-2">
+                <p className="text-red-600">Delete?</p>
+                <div className="flex gap-4">
+                  <button onClick={handleClose}>NO</button>
+                  <button onClick={handleConfirmDelete}>YES</button>
+                </div>
+              </div>
             </DialogContent>
           </Dialog>
         )}

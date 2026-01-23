@@ -6,6 +6,7 @@ describe('SettingsDialog', () => {
   const mockOnOpenChange = vi.fn();
   const mockOnDarkModeChange = vi.fn();
   const mockOnTextSizeChange = vi.fn();
+  const mockOnFontStyleChange = vi.fn();
   const mockOnSwimlanesCountChange = vi.fn();
 
   beforeEach(() => {
@@ -21,6 +22,8 @@ describe('SettingsDialog', () => {
         onDarkModeChange={mockOnDarkModeChange}
         textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
+        fontStyle="handwriting"
+        onFontStyleChange={mockOnFontStyleChange}
         swimlanesCount={0}
         onSwimlanesCountChange={mockOnSwimlanesCountChange}
       />
@@ -39,6 +42,8 @@ describe('SettingsDialog', () => {
         onDarkModeChange={mockOnDarkModeChange}
         textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
+        fontStyle="handwriting"
+        onFontStyleChange={mockOnFontStyleChange}
         swimlanesCount={0}
         onSwimlanesCountChange={mockOnSwimlanesCountChange}
       />
@@ -56,6 +61,8 @@ describe('SettingsDialog', () => {
         onDarkModeChange={mockOnDarkModeChange}
         textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
+        fontStyle="handwriting"
+        onFontStyleChange={mockOnFontStyleChange}
         swimlanesCount={0}
         onSwimlanesCountChange={mockOnSwimlanesCountChange}
       />
@@ -78,6 +85,8 @@ describe('SettingsDialog', () => {
         onDarkModeChange={mockOnDarkModeChange}
         textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
+        fontStyle="handwriting"
+        onFontStyleChange={mockOnFontStyleChange}
         swimlanesCount={0}
         onSwimlanesCountChange={mockOnSwimlanesCountChange}
       />
@@ -106,6 +115,8 @@ describe('SettingsDialog', () => {
         onDarkModeChange={mockOnDarkModeChange}
         textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
+        fontStyle="handwriting"
+        onFontStyleChange={mockOnFontStyleChange}
         swimlanesCount={0}
         onSwimlanesCountChange={mockOnSwimlanesCountChange}
       />
@@ -128,6 +139,8 @@ describe('SettingsDialog', () => {
         onDarkModeChange={mockOnDarkModeChange}
         textSize={3}
         onTextSizeChange={mockOnTextSizeChange}
+        fontStyle="handwriting"
+        onFontStyleChange={mockOnFontStyleChange}
         swimlanesCount={0}
         onSwimlanesCountChange={mockOnSwimlanesCountChange}
       />
@@ -146,6 +159,8 @@ describe('SettingsDialog', () => {
         onDarkModeChange={mockOnDarkModeChange}
         textSize={2}
         onTextSizeChange={mockOnTextSizeChange}
+        fontStyle="handwriting"
+        onFontStyleChange={mockOnFontStyleChange}
         swimlanesCount={0}
         onSwimlanesCountChange={mockOnSwimlanesCountChange}
       />
@@ -153,5 +168,95 @@ describe('SettingsDialog', () => {
 
     // Check that the number 2 is displayed
     expect(screen.getByText('2')).toBeInTheDocument();
+  });
+
+  it('should render font style dropdown', () => {
+    render(
+      <SettingsDialog
+        open={true}
+        onOpenChange={mockOnOpenChange}
+        darkMode={false}
+        onDarkModeChange={mockOnDarkModeChange}
+        textSize={3}
+        onTextSizeChange={mockOnTextSizeChange}
+        fontStyle="handwriting"
+        onFontStyleChange={mockOnFontStyleChange}
+        swimlanesCount={0}
+        onSwimlanesCountChange={mockOnSwimlanesCountChange}
+      />
+    );
+
+    expect(screen.getByText('Font style')).toBeInTheDocument();
+    const select = screen.getByDisplayValue('Handwriting');
+    expect(select).toBeInTheDocument();
+  });
+
+  it('should display all font style options', () => {
+    render(
+      <SettingsDialog
+        open={true}
+        onOpenChange={mockOnOpenChange}
+        darkMode={false}
+        onDarkModeChange={mockOnDarkModeChange}
+        textSize={3}
+        onTextSizeChange={mockOnTextSizeChange}
+        fontStyle="handwriting"
+        onFontStyleChange={mockOnFontStyleChange}
+        swimlanesCount={0}
+        onSwimlanesCountChange={mockOnSwimlanesCountChange}
+      />
+    );
+
+    const select = screen.getByDisplayValue('Handwriting') as HTMLSelectElement;
+    const options = Array.from(select.options).map(option => option.text);
+    
+    expect(options).toContain('Handwriting');
+    expect(options).toContain('Sans Serif');
+    expect(options).toContain('Serif');
+    expect(options).toContain('Monospace');
+  });
+
+  it('should change font style when dropdown is changed', async () => {
+    render(
+      <SettingsDialog
+        open={true}
+        onOpenChange={mockOnOpenChange}
+        darkMode={false}
+        onDarkModeChange={mockOnDarkModeChange}
+        textSize={3}
+        onTextSizeChange={mockOnTextSizeChange}
+        fontStyle="handwriting"
+        onFontStyleChange={mockOnFontStyleChange}
+        swimlanesCount={0}
+        onSwimlanesCountChange={mockOnSwimlanesCountChange}
+      />
+    );
+
+    const select = screen.getByDisplayValue('Handwriting');
+    fireEvent.change(select, { target: { value: 'sans-serif' } });
+
+    await waitFor(() => {
+      expect(mockOnFontStyleChange).toHaveBeenCalledWith('sans-serif');
+    });
+  });
+
+  it('should display correct font style value', () => {
+    render(
+      <SettingsDialog
+        open={true}
+        onOpenChange={mockOnOpenChange}
+        darkMode={false}
+        onDarkModeChange={mockOnDarkModeChange}
+        textSize={3}
+        onTextSizeChange={mockOnTextSizeChange}
+        fontStyle="monospace"
+        onFontStyleChange={mockOnFontStyleChange}
+        swimlanesCount={0}
+        onSwimlanesCountChange={mockOnSwimlanesCountChange}
+      />
+    );
+
+    const select = screen.getByDisplayValue('Monospace');
+    expect(select).toBeInTheDocument();
   });
 });

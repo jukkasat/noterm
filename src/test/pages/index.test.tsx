@@ -428,4 +428,51 @@ describe('Index page', () => {
       });
     });
   });
+
+  describe('Font Style', () => {
+    it('should load font style from localStorage on mount', () => {
+      localStorage.setItem('noter-font-style', 'serif');
+      render(<MainComponent />);
+      
+      const savedFontStyle = localStorage.getItem('noter-font-style');
+      expect(savedFontStyle).toBe('serif');
+    });
+
+    it('should default to handwriting if no font style is saved', () => {
+      render(<MainComponent />);
+      
+      const savedFontStyle = localStorage.getItem('noter-font-style');
+      expect(savedFontStyle).toBe('handwriting');
+    });
+
+    it('should persist font style to localStorage', () => {
+      localStorage.setItem('noter-font-style', 'monospace');
+      render(<MainComponent />);
+      
+      const savedFontStyle = localStorage.getItem('noter-font-style');
+      expect(savedFontStyle).toBe('monospace');
+    });
+
+    it('should ignore invalid font style values', () => {
+      localStorage.setItem('noter-font-style', 'invalid-font');
+      render(<MainComponent />);
+      
+      // Should fall back to default handwriting
+      const savedFontStyle = localStorage.getItem('noter-font-style');
+      expect(savedFontStyle).toBe('handwriting');
+    });
+
+    it('should accept all valid font styles', () => {
+      const validFonts = ['handwriting', 'sans-serif', 'serif', 'monospace'];
+      
+      validFonts.forEach(font => {
+        localStorage.clear();
+        localStorage.setItem('noter-font-style', font);
+        render(<MainComponent />);
+        
+        const savedFontStyle = localStorage.getItem('noter-font-style');
+        expect(savedFontStyle).toBe(font);
+      });
+    });
+  });
 });

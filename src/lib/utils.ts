@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import type { TextSize } from "@/types/note"
+import type { TextSize, FontStyle } from "@/types/note"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -91,6 +91,26 @@ export const DEFAULT_SWIMLANE_LABELS: Record<number, string[]> = {
   4: ['Backlog', 'To Do', 'In Progress', 'Review', 'Ready'],
   5: ['Backlog', 'To Do', 'In Progress', 'Review', 'Testing', 'Ready'],
 };
+
+export function getFontStyles() {
+  const fontStyleOptions = [
+    { value: 'handwriting' as FontStyle, label: 'Handwriting' },
+    { value: 'sans-serif' as FontStyle, label: 'Sans Serif' },
+    { value: 'serif' as FontStyle, label: 'Serif' },
+    { value: 'monospace' as FontStyle, label: 'Monospace' },
+  ];
+  return fontStyleOptions;
+}
+
+export function getFontClass(fontStyle: FontStyle): string {
+  const fontMap: Record<FontStyle, string> = {
+    'handwriting': 'font-handwriting',
+    'sans-serif': 'font-sans',
+    'serif': 'font-serif',
+    'monospace': 'font-mono',
+  };
+  return fontMap[fontStyle];
+}
 
 // Generate RFC4122 v4 UUID. Uses `crypto.randomUUID()` when available,
 // otherwise falls back to `crypto.getRandomValues` so it works on older/mobile browsers.

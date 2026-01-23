@@ -9,7 +9,7 @@ import { SettingsDialog } from '@/components/SettingsDialog';
 import { SupportDialog } from '@/components/SupportDialog';
 import { generateId, getThemeColors, DEFAULT_SWIMLANE_LABELS } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
-import type { Note, TextSize, SwimlanesCount } from '@/types/note';
+import type { Note, TextSize, SwimlanesCount, FontStyle } from '@/types/note';
 
 const MainComponent = () => {
   useSeoMeta({
@@ -23,6 +23,7 @@ const MainComponent = () => {
   const [isSupportDialogOpen, setIsSupportDialogOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [textSize, setTextSize] = useState<TextSize>(3);
+  const [fontStyle, setFontStyle] = useState<FontStyle>('handwriting');
   const [swimlanesCount, setSwimlanesCount] = useState<SwimlanesCount>(0);
   const [swimlaneLabels, setSwimlaneLabels] = useState<Record<number, string[]>>({});
   const [editingLaneIndex, setEditingLaneIndex] = useState<number | null>(null);
@@ -55,6 +56,11 @@ const MainComponent = () => {
       if (size >= 1 && size <= 5) {
         setTextSize(size as TextSize);
       }
+    }
+
+    const savedFontStyle = localStorage.getItem('noter-font-style');
+    if (savedFontStyle && ['handwriting', 'sans-serif', 'serif', 'monospace'].includes(savedFontStyle)) {
+      setFontStyle(savedFontStyle as FontStyle);
     }
 
     const savedSwimlanesCount = localStorage.getItem('noter-swimlanes-count');
@@ -100,6 +106,11 @@ const MainComponent = () => {
   useEffect(() => {
     localStorage.setItem('noter-text-size', textSize.toString());
   }, [textSize]);
+
+  // Save font style preference to localStorage
+  useEffect(() => {
+    localStorage.setItem('noter-font-style', fontStyle);
+  }, [fontStyle]);
 
   // Save swimlanes count preference to localStorage
   useEffect(() => {
@@ -413,6 +424,7 @@ const MainComponent = () => {
               onDelete={handleDeleteNote}
               onDragStart={handleDragStart}
               textSize={textSize}
+              fontStyle={fontStyle}
               editingNoteId={editingNoteId}
               onEditingChange={setEditingNoteId}
             />
@@ -489,6 +501,8 @@ const MainComponent = () => {
           onDarkModeChange={setDarkMode}
           textSize={textSize}
           onTextSizeChange={setTextSize}
+          fontStyle={fontStyle}
+          onFontStyleChange={setFontStyle}
           swimlanesCount={swimlanesCount}
           onSwimlanesCountChange={setSwimlanesCount}
         />

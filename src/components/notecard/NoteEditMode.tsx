@@ -10,6 +10,7 @@ interface NoteEditModeProps {
   subject: string;
   content: ContentItem[];
   sizeClasses: { subject: string; message: string; date: string };
+  fontClass: string;
   onSubjectChange: (value: string) => void;
   onContentChange: (id: string, updates: Partial<ContentItem>) => void;
   onRemoveContent: (id: string) => void;
@@ -31,6 +32,7 @@ export function NoteEditMode({
   subject,
   content,
   sizeClasses,
+  fontClass,
   onSubjectChange,
   onContentChange,
   onRemoveContent,
@@ -113,7 +115,7 @@ export function NoteEditMode({
       >
         <input
           type="text"
-          className={`bg-transparent border-b border-gray-400 outline-none ${sizeClasses.subject} font-handwriting font-semibold`}
+          className={`bg-transparent border-b border-gray-400 outline-none ${sizeClasses.subject} ${fontClass} font-semibold`}
           value={subject}
           onChange={(e) => onSubjectChange(e.target.value)}
           placeholder="Subject (optional)..."
@@ -127,7 +129,7 @@ export function NoteEditMode({
             {item.type === 'text' && (
               <div className="relative">
                 <textarea
-                  className={`text-input w-full bg-transparent rounded outline-none resize-none overflow-hidden ${sizeClasses.message} font-handwriting min-h-[60px] p-2 text-gray-900 dark:text-gray-100`}
+                  className={`text-input w-full bg-transparent rounded outline-none resize-none overflow-hidden ${sizeClasses.message} ${fontClass} min-h-[60px] p-2 text-gray-900 dark:text-gray-100`}
                   style={{ maxHeight: '2000px' }}
                   value={item.value}
                   onInput={(e) => {
@@ -163,7 +165,7 @@ export function NoteEditMode({
                 />
                 <input
                   type="text"
-                  className={`checkbox-input flex-1 bg-transparent border-b border-gray-300 outline-none ${sizeClasses.message} font-handwriting text-gray-900 dark:text-gray-100 min-w-0`}
+                  className={`checkbox-input flex-1 bg-transparent border-b border-gray-300 outline-none ${sizeClasses.message} ${fontClass} text-gray-900 dark:text-gray-100 min-w-0`}
                   value={item.text}
                   onChange={(e) => onContentChange(item.id, { text: e.target.value })}
                   onKeyDown={(e) => handleContentKeyDown(e, item.id, index)}
@@ -214,7 +216,7 @@ export function NoteEditMode({
         <Button
           size="sm"
           variant="ghost"
-          className="h-6 px-2 text-xs"
+          className="h-6 px-1 text-xs"
           onClick={(e) => {
             e.stopPropagation();
             onSave();
@@ -227,7 +229,7 @@ export function NoteEditMode({
         <Button
           size="sm"
           variant="ghost"
-          className="h-6 px-2 text-xs"
+          className="h-6 px-1 text-xs"
           onClick={(e) => {
             e.stopPropagation();
             onCancel();
@@ -242,7 +244,7 @@ export function NoteEditMode({
             <Button
               size="sm"
               variant="ghost"
-              className="h-6 px-2 text-xs"
+              className="h-6 px-1 text-xs"
               onClick={(e) => e.stopPropagation()}
               onMouseDown={(e) => e.stopPropagation()}
               onTouchStart={(e) => e.stopPropagation()}

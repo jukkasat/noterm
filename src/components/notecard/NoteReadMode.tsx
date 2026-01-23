@@ -7,6 +7,7 @@ interface NoteReadModeProps {
   note: Note;
   content: ContentItem[];
   sizeClasses: { subject: string; message: string; date: string };
+  fontClass: string;
   onEdit: () => void;
   onDelete: () => void;
   onImageClick: (url: string) => void;
@@ -19,6 +20,7 @@ export function NoteReadMode({
   note,
   content,
   sizeClasses,
+  fontClass,
   onEdit,
   onDelete,
   onImageClick,
@@ -35,7 +37,7 @@ export function NoteReadMode({
           onEdit();
         }}>
         {note.subject && (
-          <p className={`${sizeClasses.subject} font-handwriting font-semibold mb-2 border-b border-gray-400 pb-1 text-gray-800`}>
+          <p className={`${sizeClasses.subject} ${fontClass} font-semibold mb-2 border-b border-gray-400 pb-1 text-gray-800`}>
             {note.subject}
           </p>
         )}
@@ -44,7 +46,7 @@ export function NoteReadMode({
           {content.map((item) => (
             <div key={item.id}>
               {item.type === 'text' && item.value && (
-                <p className={`${sizeClasses.message} whitespace-pre-wrap break-words font-handwriting text-gray-800`}>
+                <p className={`${sizeClasses.message} whitespace-pre-wrap break-words ${fontClass} text-gray-800`}>
                   {item.value}
                 </p>
               )}
@@ -66,7 +68,7 @@ export function NoteReadMode({
                     onMouseDown={(e) => e.stopPropagation()}
                     onTouchStart={(e) => e.stopPropagation()}
                   />
-                  <span className={`${sizeClasses.message} font-handwriting text-gray-800 ${item.checked ? 'line-through opacity-60' : ''}`}>
+                  <span className={`${sizeClasses.message} ${fontClass} text-gray-800 ${item.checked ? 'line-through opacity-60' : ''}`}>
                     {item.text}
                   </span>
                 </div>
@@ -91,7 +93,7 @@ export function NoteReadMode({
       </div>
       <div className="mt-4">
         <div className="flex items-center justify-between">
-          <p className={`${sizeClasses.date} text-gray-600 font-handwriting flex-1 text-center`}>
+          <p className={`${sizeClasses.date} text-gray-600 ${fontClass} flex-1 text-center`}>
             {formatDate(note.updatedAt)}
           </p>
           <div className="flex gap-1">

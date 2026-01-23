@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { clamp, generateId } from '@/lib/utils';
+import { clamp, generateId, getFontClass, getFontStyles } from '@/lib/utils';
 
 describe('clamp', () => {
   it('should return the value if it is within the range', () => {
@@ -38,5 +38,58 @@ describe('generateId', () => {
     expect(typeof id).toBe('string');
 
     crypto.randomUUID = originalRandomUUID;
+  });
+});
+
+describe('getFontStyles', () => {
+  it('should return an array of font style options', () => {
+    const fontStyles = getFontStyles();
+    expect(fontStyles).toHaveLength(4);
+  });
+
+  it('should include handwriting font style', () => {
+    const fontStyles = getFontStyles();
+    const handwriting = fontStyles.find(style => style.value === 'handwriting');
+    expect(handwriting).toBeDefined();
+    expect(handwriting?.label).toBe('Handwriting');
+  });
+
+  it('should include sans-serif font style', () => {
+    const fontStyles = getFontStyles();
+    const sansSerif = fontStyles.find(style => style.value === 'sans-serif');
+    expect(sansSerif).toBeDefined();
+    expect(sansSerif?.label).toBe('Sans Serif');
+  });
+
+  it('should include serif font style', () => {
+    const fontStyles = getFontStyles();
+    const serif = fontStyles.find(style => style.value === 'serif');
+    expect(serif).toBeDefined();
+    expect(serif?.label).toBe('Serif');
+  });
+
+  it('should include monospace font style', () => {
+    const fontStyles = getFontStyles();
+    const monospace = fontStyles.find(style => style.value === 'monospace');
+    expect(monospace).toBeDefined();
+    expect(monospace?.label).toBe('Monospace');
+  });
+});
+
+describe('getFontClass', () => {
+  it('should return correct class for handwriting', () => {
+    expect(getFontClass('handwriting')).toBe('font-handwriting');
+  });
+
+  it('should return correct class for sans-serif', () => {
+    expect(getFontClass('sans-serif')).toBe('font-sans');
+  });
+
+  it('should return correct class for serif', () => {
+    expect(getFontClass('serif')).toBe('font-serif');
+  });
+
+  it('should return correct class for monospace', () => {
+    expect(getFontClass('monospace')).toBe('font-mono');
   });
 });
