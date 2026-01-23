@@ -1,4 +1,4 @@
-const CACHE_NAME = 'noter-m-v1_0_2';
+const CACHE_NAME = 'noter-m-v1_0_3';
 
 self.addEventListener('install', (event) => {
   // Skip waiting to activate immediately

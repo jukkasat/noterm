@@ -13,8 +13,8 @@ import { useState } from 'react';
 import { AboutDialog } from '@/components/AboutDialog';
 import { ContactDialog } from '@/components/ContactDialog';
 import { SupportDialog } from '@/components/SupportDialog';
-import type { TextSize, SwimlanesCount } from '@/types/note';
-import { getTextSizeClasses } from '@/lib/utils';
+import type { TextSize, SwimlanesCount, FontStyle } from '@/types/note';
+import { getTextSizeClasses, getFontClass, getFontStyles } from '@/lib/utils';
 
 interface SettingsDialogProps {
   open: boolean;
@@ -23,11 +23,13 @@ interface SettingsDialogProps {
   onDarkModeChange: (enabled: boolean) => void;
   textSize: TextSize;
   onTextSizeChange: (size: TextSize) => void;
+  fontStyle: FontStyle;
+  onFontStyleChange: (style: FontStyle) => void;
   swimlanesCount: SwimlanesCount;
   onSwimlanesCountChange: (count: SwimlanesCount) => void;
 }
 
-export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange, textSize, onTextSizeChange, swimlanesCount, onSwimlanesCountChange }: SettingsDialogProps) {
+export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange, textSize, onTextSizeChange, fontStyle, onFontStyleChange, swimlanesCount, onSwimlanesCountChange }: SettingsDialogProps) {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isSupportOpen, setIsSupportOpen] = useState(false);
   const [isContactOpen, setIsContactOpen] = useState(false);
@@ -35,6 +37,8 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange,
   const textColor = darkMode ? '#e0d5c5' : '#5a4a2f';
   const descColor = darkMode ? '#c0b5a5' : '#58544fff';
   const sizeClasses = getTextSizeClasses(textSize);
+  const fontStyleOptions = getFontStyles();
+  const fontClass = getFontClass(fontStyle);
 
   return (
     <>
@@ -48,15 +52,15 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange,
           }}
         >
           <DialogHeader>
-            <DialogTitle className={sizeClasses.title} style={{ color: textColor}}>Settings</DialogTitle>
+            <DialogTitle className={`${sizeClasses.title} ${fontClass}`} style={{ color: textColor}}>Settings</DialogTitle>
             <p className="pb-4">______</p>
-            <DialogDescription className={sizeClasses.description} style={{ color: descColor }}>
+            <DialogDescription className={`${sizeClasses.description} ${fontClass}`} style={{ color: descColor }}>
               Customize your noter m. experience.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="dark-mode" className={`cursor-pointer ${sizeClasses.label}`} style={{ color: textColor }}>
+              <Label htmlFor="dark-mode" className={`cursor-pointer ${sizeClasses.label} ${fontClass}`} style={{ color: textColor }}>
                 Theme
               </Label>
               <Switch
@@ -68,7 +72,30 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange,
             </div>
 
             <div className="flex items-center justify-between">
-              <Label className={sizeClasses.label} style={{ color: textColor }}>Text size</Label>
+              <Label htmlFor="font-style" className={`${sizeClasses.label} ${fontClass}`} style={{ color: textColor }}>
+                Font style
+              </Label>
+              <select
+                id="font-style"
+                value={fontStyle}
+                onChange={(e) => onFontStyleChange(e.target.value as FontStyle)}
+                className={`rounded-md border px-3 py-1.5 ${sizeClasses.label} ${fontClass} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2`}
+                style={{
+                  backgroundColor: darkMode ? '#2a2520' : '#fdfcfa',
+                  color: textColor,
+                  borderColor: '#8b6f47'
+                }}
+              >
+                {fontStyleOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <Label className={`${sizeClasses.label} ${fontClass}`} style={{ color: textColor }}>Text size</Label>
               <div className="flex items-center gap-2">
                 <Button
                   type="button"
@@ -85,7 +112,7 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange,
                 >
                   <Minus className="h-3 w-3" />
                 </Button>
-                <span className={`w-8 text-center font-semibold ${sizeClasses.label}`} style={{ color: textColor }}>
+                <span className={`w-8 text-center font-semibold ${sizeClasses.label} ${fontClass}`} style={{ color: textColor }}>
                   {textSize}
                 </span>
                 <Button
@@ -107,7 +134,7 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange,
             </div>
 
             <div className="flex items-center justify-between">
-              <Label className={sizeClasses.label} style={{ color: textColor }}>Swimlanes / Kanban</Label>
+              <Label className={`${sizeClasses.label} ${fontClass}`} style={{ color: textColor }}>Swimlanes / Kanban</Label>
               <div className="flex items-center gap-2">
                 <Button
                   type="button"
@@ -124,7 +151,7 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange,
                 >
                   <Minus className="h-3 w-3" />
                 </Button>
-                <span className={`w-8 text-center font-semibold ${sizeClasses.label}`} style={{ color: textColor }}>
+                <span className={`w-8 text-center font-semibold ${sizeClasses.label} ${fontClass}`} style={{ color: textColor }}>
                   {swimlanesCount}
                 </span>
                 <Button
@@ -150,7 +177,7 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange,
               <button
                 type="button"
                 onClick={() => setIsAboutOpen(true)}
-                className={`text-left ${sizeClasses.button}`}
+                className={`text-left ${sizeClasses.button} ${fontClass}`}
                 style={{ background: 'transparent', border: 'none', color: textColor, fontWeight: 'bold', cursor: 'pointer' }}
               >
                 About
@@ -158,7 +185,7 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange,
               <button
                 type="button"
                 onClick={() => setIsContactOpen(true)}
-                className={`text-left ${sizeClasses.button}`}
+                className={`text-left ${sizeClasses.button} ${fontClass}`}
                 style={{ background: 'transparent', border: 'none', color: textColor, fontWeight: 'bold', cursor: 'pointer' }}
               >
                 Contact
@@ -166,7 +193,7 @@ export function SettingsDialog({ open, onOpenChange, darkMode, onDarkModeChange,
               <button
                 type="button"
                 onClick={() => setIsSupportOpen(true)}
-                className={`text-left ${sizeClasses.button}`}
+                className={`text-left ${sizeClasses.button} ${fontClass}`}
                 style={{ background: 'transparent', border: 'none', color: textColor, fontWeight: 'bold', cursor: 'pointer' }}
               >
                 Support

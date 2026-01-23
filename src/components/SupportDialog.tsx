@@ -19,7 +19,6 @@ export function SupportDialog({ open, onOpenChange, darkMode = false }: SupportD
   const textColor = darkMode ? '#e0d5c5' : '#5a4a2f';
   const descColor = darkMode ? '#c0b5a5' : '#58544fff';
 
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -36,13 +35,11 @@ export function SupportDialog({ open, onOpenChange, darkMode = false }: SupportD
           <DialogDescription className="text-center" style={{ color: descColor }}>
             SUPPORT NOTER M. DEVELOPMENT AND MAINTENANCE
           </DialogDescription>
-          {/* <p className="pt-2 text-center">_______</p> */}
         </DialogHeader>
 
         <div className="py-4 pl-1 text-center" >
           <div className="text-sm mb-4" style={{ color: textColor }}>
-            <p className="mb-1">Lightning / eCash:</p>
-            <a href="lightning:21s@minibits.cash" className='underline'>21s@minibits.cash</a>
+            <a href="lightning:21s@minibits.cash" className='underline'>Lightning / eCash</a>
           </div>
           <p className="pb-6 text-center">_______</p>
           <p className="text-sm mb-2" style={{ color: textColor }}>
