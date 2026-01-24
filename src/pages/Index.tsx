@@ -13,7 +13,7 @@ import type { Note, TextSize, SwimlanesCount, FontStyle } from '@/types/note';
 
 const MainComponent = () => {
   useSeoMeta({
-    title: 'noter m. - Your Digital Note Board',
+    title: 'noter m.',
     description: 'A beautiful digital note board for organizing your thoughts and things to remember',
   });
 
