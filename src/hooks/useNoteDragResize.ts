@@ -84,7 +84,7 @@ export function useNoteDragResize(
     };
 
     const handleEnd = () => {
-      // Add drop animation
+      // Drop animation
       if (isDragging && cardRef.current) {
         cardRef.current.style.transition = 'transform 0.2s ease-out, box-shadow 0.2s ease-out';
         cardRef.current.style.transform = '';
