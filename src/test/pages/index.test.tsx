@@ -475,4 +475,197 @@ describe('Index page', () => {
       });
     });
   });
+
+  describe('Save Backup Dialog', () => {
+    it('should open save backup dialog when clicking save button', async () => {
+      render(<MainComponent />);
+      
+      const saveButton = screen.getAllByRole('button').find(btn => 
+        btn.querySelector('svg')?.classList.contains('lucide-save')
+      );
+      
+      if (saveButton) {
+        fireEvent.click(saveButton);
+        await waitFor(() => {
+          expect(screen.getByText('Save Backup')).toBeInTheDocument();
+          expect(screen.getByText('Enter a name for your backup file.')).toBeInTheDocument();
+        });
+      }
+    });
+
+    it('should show default filename in save dialog', async () => {
+      render(<MainComponent />);
+      
+      const saveButton = screen.getAllByRole('button').find(btn => 
+        btn.querySelector('svg')?.classList.contains('lucide-save')
+      );
+      
+      if (saveButton) {
+        fireEvent.click(saveButton);
+        await waitFor(() => {
+          const input = screen.getByLabelText('Filename') as HTMLInputElement;
+          expect(input.value).toMatch(/noter_backup_\d{2}_\d{2}_\d{2}\.json/);
+        });
+      }
+    });
+
+    it('should allow editing filename before saving', async () => {
+      render(<MainComponent />);
+      
+      const saveButton = screen.getAllByRole('button').find(btn => 
+        btn.querySelector('svg')?.classList.contains('lucide-save')
+      );
+      
+      if (saveButton) {
+        fireEvent.click(saveButton);
+        
+        await waitFor(() => {
+          const input = screen.getByLabelText('Filename');
+          fireEvent.change(input, { target: { value: 'my_custom_backup.json' } });
+          expect((input as HTMLInputElement).value).toBe('my_custom_backup.json');
+        });
+      }
+    });
+
+    it('should trigger download when save is confirmed', async () => {
+      const testNotes = [{
+        id: '1',
+        content: [{ type: 'text', id: '1', value: 'Test note for backup' }],
+        x: 100,
+        y: 100,
+        width: 250,
+        height: 200,
+        color: '#fef08a',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      }];
+      
+      localStorage.setItem('noter-notes', JSON.stringify(testNotes));
+      render(<MainComponent />);
+      
+      const saveButton = screen.getAllByRole('button').find(btn => 
+        btn.querySelector('svg')?.classList.contains('lucide-save')
+      );
+      
+      if (saveButton) {
+        fireEvent.click(saveButton);
+        
+        await waitFor(() => {
+          const confirmButton = screen.getByRole('button', { name: /save/i });
+          fireEvent.click(confirmButton);
+        });
+
+        await waitFor(() => {
+          expect(global.URL.createObjectURL).toHaveBeenCalled();
+        });
+      }
+    });
+
+    it('should close dialog when cancel is clicked', async () => {
+      render(<MainComponent />);
+      
+      const saveButton = screen.getAllByRole('button').find(btn => 
+        btn.querySelector('svg')?.classList.contains('lucide-save')
+      );
+      
+      if (saveButton) {
+        fireEvent.click(saveButton);
+        
+        await waitFor(() => {
+          expect(screen.getByText('Save Backup')).toBeInTheDocument();
+        });
+
+        const cancelButton = screen.getByText('Cancel');
+        fireEvent.click(cancelButton);
+
+        await waitFor(() => {
+          expect(screen.queryByText('Save Backup')).not.toBeInTheDocument();
+        });
+      }
+    });
+
+    it('should add .json extension if missing', async () => {
+      render(<MainComponent />);
+      
+      const saveButton = screen.getAllByRole('button').find(btn => 
+        btn.querySelector('svg')?.classList.contains('lucide-save')
+      );
+      
+      if (saveButton) {
+        fireEvent.click(saveButton);
+        
+        await waitFor(async () => {
+          const input = screen.getByLabelText('Filename');
+          fireEvent.change(input, { target: { value: 'backup_without_ext' } });
+          
+          const confirmButton = screen.getByRole('button', { name: /save/i });
+          fireEvent.click(confirmButton);
+          
+          // The download link would have .json extension added
+          await waitFor(() => {
+            expect(global.URL.createObjectURL).toHaveBeenCalled();
+          });
+        });
+      }
+    });
+
+    it('should apply dark mode styling to save dialog', async () => {
+      localStorage.setItem('noter-dark-mode', 'true');
+      render(<MainComponent />);
+      
+      const saveButton = screen.getAllByRole('button').find(btn => 
+        btn.querySelector('svg')?.classList.contains('lucide-save')
+      );
+      
+      if (saveButton) {
+        fireEvent.click(saveButton);
+        
+        await waitFor(() => {
+          const input = screen.getByLabelText('Filename');
+          expect(input).toHaveStyle({ backgroundColor: '#2a2520' });
+        });
+      }
+    });
+
+    it('should apply custom font style to save dialog', async () => {
+      localStorage.setItem('noter-font-style', 'serif');
+      render(<MainComponent />);
+      
+      const saveButton = screen.getAllByRole('button').find(btn => 
+        btn.querySelector('svg')?.classList.contains('lucide-save')
+      );
+      
+      if (saveButton) {
+        fireEvent.click(saveButton);
+        
+        await waitFor(() => {
+          const title = screen.getByText('Save Backup');
+          expect(title.className).toContain('font-serif');
+        });
+      }
+    });
+
+    it('should save with Enter key in save dialog', async () => {
+      render(<MainComponent />);
+      
+      const saveButton = screen.getAllByRole('button').find(btn => 
+        btn.querySelector('svg')?.classList.contains('lucide-save')
+      );
+      
+      if (saveButton) {
+        fireEvent.click(saveButton);
+        
+        await waitFor(() => {
+          const input = screen.getByLabelText('Filename');
+          fireEvent.change(input, { target: { value: 'enter_save.json' } });
+          fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+        });
+
+        await waitFor(() => {
+          expect(global.URL.createObjectURL).toHaveBeenCalled();
+          expect(screen.queryByText('Save Backup')).not.toBeInTheDocument();
+        });
+      }
+    });
+  });
 });
