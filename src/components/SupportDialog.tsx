@@ -39,7 +39,7 @@ export function SupportDialog({ open, onOpenChange, darkMode = false }: SupportD
 
         <div className="py-4 pl-1 text-center" >
           <div className="text-sm mb-4" style={{ color: textColor }}>
-            <a href="lightning:21s@minibits.cash" className='underline'>Lightning / eCash</a>
+            <a href="lightning:noterm@walletofsatoshi.com" className='underline'>Lightning / eCash</a>
           </div>
           <p className="pb-6 text-center">_______</p>
           <p className="text-sm mb-2" style={{ color: textColor }}>

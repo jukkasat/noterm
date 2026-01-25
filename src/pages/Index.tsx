@@ -7,20 +7,22 @@ import { AddNoteDialog } from '@/components/AddNoteDialog';
 import { NOTE_COLORS } from '@/components/noteColors';
 import { SettingsDialog } from '@/components/SettingsDialog';
 import { SupportDialog } from '@/components/SupportDialog';
+import { SaveBackupDialog } from '@/components/SaveBackupDialog';
 import { generateId, getThemeColors, DEFAULT_SWIMLANE_LABELS } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
 import type { Note, TextSize, SwimlanesCount, FontStyle } from '@/types/note';
 
 const MainComponent = () => {
   useSeoMeta({
-    title: 'noter m.',
-    description: 'A beautiful digital note board for organizing your thoughts and things to remember',
+    title: 'noter m. - Digital Note Board app',
+    description: 'A Free digital note board application for organizing your thoughts and things to remember',
   });
 
   const [notes, setNotes] = useState<Note[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
   const [isSupportDialogOpen, setIsSupportDialogOpen] = useState(false);
+  const [isSaveBackupDialogOpen, setIsSaveBackupDialogOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [textSize, setTextSize] = useState<TextSize>(3);
   const [fontStyle, setFontStyle] = useState<FontStyle>('handwriting');
@@ -209,18 +211,25 @@ const MainComponent = () => {
     }
   };
 
+  const getDefaultFilename = () => {
+    const now = new Date();
+    const dd = String(now.getDate()).padStart(2, '0');
+    const mm = String(now.getMonth() + 1).padStart(2, '0'); // month
+    const yy = String(now.getFullYear()).substring(2);
+    return `noter_backup_${dd}_${mm}_${yy}.json`;
+  };
+
   const handleSaveToFile = () => {
+    setIsSaveBackupDialogOpen(true);
+  };
+
+  const handleConfirmSave = (filename: string) => {
     const dataStr = JSON.stringify(notes, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
 
     const link = document.createElement('a');
     link.href = url;
-    const now = new Date();
-    const dd = String(now.getDate()).padStart(2, '0');
-    const mm = String(now.getMonth() + 1).padStart(2, '0'); // month
-    const yy = String(now.getFullYear()).substring(2);
-    const filename = `noter_backup_${dd}_${mm}_${yy}.json`;
     link.download = filename;
     document.body.appendChild(link);
     link.click();
@@ -509,6 +518,15 @@ const MainComponent = () => {
         <SupportDialog
           open={isSupportDialogOpen}
           onOpenChange={setIsSupportDialogOpen}
+          darkMode={darkMode}
+        />
+        <SaveBackupDialog
+          open={isSaveBackupDialogOpen}
+          onOpenChange={setIsSaveBackupDialogOpen}
+          onSave={handleConfirmSave}
+          defaultFilename={getDefaultFilename()}
+          textSize={textSize}
+          fontStyle={fontStyle}
           darkMode={darkMode}
         />
       </div>
